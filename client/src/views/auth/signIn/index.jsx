@@ -67,6 +67,28 @@ function SignIn() {
   );
   const [show, setShow] = React.useState(false);
   const handleClick = () => setShow(!show);
+
+  const verifyLogin = async () => {
+    const email = document.querySelector("input[name='email'")
+    const password = document.querySelector("input[name='password'")
+    console.log(email, password)
+    await fetch("/api/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json"
+      },
+      body: JSON.stringify({
+        email: email.value,
+        password: password.value
+      })
+    }).then((res) => res.json())
+    .then((data) => {
+      console.log(data)
+      //setData(data)
+      //first_name.value = last_name.value = ""
+    });
+  }
+
   return (
     <DefaultAuth illustrationBackground={illustration} image={illustration}>
       <Flex
@@ -138,6 +160,7 @@ function SignIn() {
               Email<Text color={brandStars}>*</Text>
             </FormLabel>
             <Input
+              name="email"
               isRequired={true}
               variant='auth'
               fontSize='sm'
@@ -158,6 +181,7 @@ function SignIn() {
             </FormLabel>
             <InputGroup size='md'>
               <Input
+                name="password" 
                 isRequired={true}
                 fontSize='sm'
                 placeholder='Min. 8 characters'
@@ -202,6 +226,7 @@ function SignIn() {
               </NavLink>
             </Flex>
             <Button
+              onClick={verifyLogin}
               fontSize='sm'
               variant='brand'
               fontWeight='500'
