@@ -9,29 +9,27 @@ import { ChakraProvider } from "@chakra-ui/react";
 import theme from "theme/theme";
 import { ThemeEditorProvider } from "@hypertheme-editor/chakra-ui";
 
-function requireAuth(nextState, replace, next) {
-  const authenticated = false;
-  if (!authenticated) {
-    console.log('aldls')
-    replace({
-      pathname: "/auth/sign-in",
-      state: {nextPathname: nextState.location.pathname}
-    });
-  }
-  next();
-}
+const logged = true;
 
 ReactDOM.render(
   <ChakraProvider theme={theme}>
     
       <ThemeEditorProvider>
         <BrowserRouter>
-          <Switch>
-            <Route path={`/auth`} component={AuthLayout} render={requireAuth}  />
-            <Route path={`/admin`} component={AdminLayout} render={requireAuth} />
-            <Route path={`/rtl`} component={RTLLayout} render={requireAuth}  />
+        {logged?
+        <Switch>
+            <Route path={`/admin`} component={AdminLayout}  />
+            <Redirect from='/auth/sign-in' to='/admin/panel' push={true} />
             <Redirect from='/' to='/admin/panel'  />
-          </Switch>
+            <Redirect from='*' to='/admin/panel'  />
+        </Switch>:
+        <Switch>
+            <Route path={`/auth`} component={AuthLayout}  />
+            <Redirect to='/auth/sign-in' push={true} />
+            <Redirect from='/' to='/auth/sign-in'  />
+            <Redirect from='*' to='/auth/sign-in'  />
+          </Switch>}
+          
         </BrowserRouter>
       </ThemeEditorProvider>
     
