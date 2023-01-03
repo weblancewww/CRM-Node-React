@@ -83,9 +83,9 @@ function SignIn() {
       })
     }).then((res) => res.json())
     .then((data) => {
-      console.log(data)
-      //setData(data)
-      //first_name.value = last_name.value = ""
+      if(data.type == "success"){
+        window.location.href = "/";
+      }
     });
   }
 
@@ -105,7 +105,7 @@ function SignIn() {
         flexDirection='column'>
         <Box me='auto'>
           <Heading color={textColor} fontSize='36px' mb='10px'>
-            Sign In
+            Zaloguj się
           </Heading>
           <Text
             mb='36px'

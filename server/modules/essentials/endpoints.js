@@ -4,6 +4,7 @@ const mysql = require("./mysql");
 var db =  new mysql();
 const bcrypt = require("bcrypt")
 const session = require("express-session")
+const cookieParser = require("cookie-parser")
 
 /*bcrypt.genSalt(10, (err, salt) => {
     bcrypt.hash("admin", salt, function(err, hash) {
@@ -16,34 +17,19 @@ const session = require("express-session")
         }
         });*/
 function endpoints(){
-    const login_page = "/auth/sign-in";
-    const login_page_endpoint = "/api/auth/login";
-    /*app.use((req, res, next) => {
-        console.log(session.logged)
-        if(session.logged){
-            console.log(1)
-            if(req.url == login_page){
-                res.redirect("/");
-            }
-        } else {
-            if(req.url != login_page && req.url != login_page_endpoint) {
-                console.log(3)
-            res.redirect(login_page);
-            } else {
-                next();
-            }
-        }
-        
-      })*/
+    app.use(cookieParser())
 
     app.post("/api", (req, res) => {
         console.log(req.body)
         res.json("test")
     });
-
+    app.post("/api/auth/session", (req, res) =>{
+        res.json({session: session.logged})
+    })
     app.post("/api/auth/login", (req, res) => {
         db.verifyUser(req.body, (data)=>{
             if(!data){
+                session.logged = false;
                 res.json({
                     type: "error",
                     message: "Nieprawidłowy login lub hasło!",
@@ -54,7 +40,10 @@ function endpoints(){
             data.map(x => data = x)
             bcrypt.compare(req.body.password, data.password, function(err, result) {
                 if (result) {
+                    
                     session.logged = true;
+                    session.user_id = data.user_id;
+                    res.cookie('user_id', data.user_id)
                     res.json({
                         type: "success",
                         message: "Pomyślnie zalogowano!",
@@ -71,7 +60,11 @@ function endpoints(){
                 });
         })
     });
-  
+    app.post("/api/auth/logout", (req, res) =>{
+        session.logged = false;
+        res.cookie('user_id', null)
+        res.json('wylogowno')
+    })
 }
 
 module.exports = {endpoints};

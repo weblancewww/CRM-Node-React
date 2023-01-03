@@ -27,7 +27,7 @@ module.exports = class MySQL {
    }
 
    verifyUser(data, callback){
-    this.con.query("SELECT email, password FROM users WHERE email='" + data.email +"';", 
+    this.con.query("SELECT user_id, email, password FROM users WHERE email='" + data.email +"';", 
     function (err, result) {
       if (err) throw err;
       return callback(result);
