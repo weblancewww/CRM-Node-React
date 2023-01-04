@@ -65,6 +65,63 @@ function endpoints(){
         res.cookie('user_id', null)
         res.json('wylogowno')
     })
+
+    app.post("/api/user/info", (req, res) =>{
+        if(!session.logged){
+            return
+        }
+        db.userInfo({user_id:session.user_id},(data) =>{
+            console.log(data)
+            data.map(x => data = x)
+            res.json(data)
+        })
+    })
+
+    app.post("/api/auth/changePassword", (req, res) =>{
+        if(!session.logged){
+            return
+        }
+
+        db.getPass({user_id:session.user_id},(data) =>{
+            
+            data.map(x => data = x)
+            
+            session.continue = true
+            
+            console.log(req.body.old_pass,data.password,'test')
+            bcrypt.compare(req.body.old_pass, data.password, function(err, result) {
+                console.log(req.body.old_pass,data.password,result,'test2')
+                if (!result) {
+                    
+                    console.log(req.body.old_pass)
+                    res.json({
+                        type: "error",
+                        message: "Podano niepoprawne aktualne hasło!",
+                        data: {}
+                        
+                    })
+                    session.continue = false
+                } 
+                
+                });
+        })
+
+        if(session.continue == false) return;
+        
+        bcrypt.hash(req.body.new_pass, 10, function(err, hash) {
+            console.log('test3')
+            session.hashPass = hash;
+            
+            });
+        db.changePass({user_id:session.user_id,password:session.hashPass},(data) =>{
+            console.log(data)
+            console.log('test4')
+            // res.json(data)
+        })
+
+        
+    })
+
 }
 
 module.exports = {endpoints};

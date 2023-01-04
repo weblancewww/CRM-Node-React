@@ -33,4 +33,30 @@ module.exports = class MySQL {
       return callback(result);
     });
   }
+  
+  userInfo(data, callback){
+    this.con.query("SELECT user_id, email, first_name, last_name, positions, photo FROM users WHERE user_id='" + data.user_id +"';", 
+    function (err, result) {
+      if (err) throw err;
+      return callback(result);
+    });
+  }
+
+  getPass(data, callback){
+    this.con.query("SELECT password FROM users WHERE user_id='" + data.user_id +"';", 
+    function (err, result) {
+      if (err) throw err;
+      return callback(result);
+    });
+  }
+
+  changePass(data, callback){
+    console.log(data)
+    this.con.query("UPDATE users SET password = '" + data.password + "' WHERE user_id='" + data.user_id +"';", 
+    function (err, result) {
+      if (err) throw err;
+      return callback(result);
+    });
+  }
+
 }

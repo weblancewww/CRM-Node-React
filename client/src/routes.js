@@ -64,6 +64,14 @@ const routes = [
     component: SignInCentered,
     notVisible: true
   },
+  {
+    name: "Pracownicy",
+    layout: "/admin",
+    path: "/workers",
+    icon: <Icon as={MdLock} width='20px' height='20px' color='inherit' />,
+    component: SignInCentered,
+    // notVisible: true
+  },
 
 ];
 

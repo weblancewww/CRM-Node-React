@@ -1,7 +1,8 @@
 // Chakra imports
-import { Avatar, Box, Flex, Text, useColorModeValue } from "@chakra-ui/react";
+import { Avatar, Box, Flex, Text, useColorModeValue, SimpleGrid} from "@chakra-ui/react";
 import Card from "components/card/Card.js";
 import React from "react";
+import Information from "views/admin/profile/components/Information";
 
 export default function Banner(props) {
   const { banner, avatar, name, job, posts, followers, following } = props;
@@ -11,6 +12,10 @@ export default function Banner(props) {
   const borderColor = useColorModeValue(
     "white !important",
     "#111C44 !important"
+  );
+  const cardShadow = useColorModeValue(
+    "0px 18px 40px rgba(112, 144, 176, 0.12)",
+    "unset"
   );
   return (
     <Card mb={{ base: "0px", lg: "20px" }} align='center'>
@@ -36,7 +41,7 @@ export default function Banner(props) {
       <Text color={textColorSecondary} fontSize='sm'>
         {job}
       </Text>
-      <Flex w='max-content' mx='auto' mt='26px'>
+      {/* <Flex w='max-content' mx='auto' mt='26px'>
         <Flex mx='auto' me='60px' align='center' direction='column'>
           <Text color={textColorPrimary} fontSize='2xl' fontWeight='700'>
             {posts}
@@ -61,7 +66,40 @@ export default function Banner(props) {
             Following
           </Text>
         </Flex>
-      </Flex>
+      </Flex> */}
+      <SimpleGrid columns='2' gap='20px'>
+        <Information
+          boxShadow={cardShadow}
+          title='Education'
+          value='Stanford University'
+        />
+        <Information
+          boxShadow={cardShadow}
+          title='Languages'
+          value='English, Spanish, Italian'
+        />
+        <Information
+          boxShadow={cardShadow}
+          title='Department'
+          value='Product Design'
+        />
+        <Information
+          boxShadow={cardShadow}
+          title='Work History'
+          value='Google, Facebook'
+        />
+        <Information
+          boxShadow={cardShadow}
+          title='Organization'
+          value='Simmmple Web LLC'
+        />
+        <Information
+          boxShadow={cardShadow}
+          title='Birthday'
+          value='20 July 1986'
+        />
+      </SimpleGrid>
+
     </Card>
   );
 }
