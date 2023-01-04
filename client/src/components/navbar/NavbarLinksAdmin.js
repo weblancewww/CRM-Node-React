@@ -26,6 +26,7 @@ import { MdNotificationsNone, MdInfoOutline } from "react-icons/md";
 import { FaEthereum } from "react-icons/fa";
 import routes from "routes.js";
 import { ThemeEditor } from "./ThemeEditor";
+import { NavLink } from "react-router-dom";
 export default function HeaderLinks(props) {
   const { secondary } = props;
   // Chakra Color Mode
@@ -42,6 +43,17 @@ export default function HeaderLinks(props) {
     "14px 17px 40px 4px rgba(112, 144, 176, 0.06)"
   );
   const borderButton = useColorModeValue("secondaryGray.500", "whiteAlpha.200");
+
+  const logout = () =>{
+    fetch("/api/auth/logout", {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json"
+      }}).then((res) => res.json())
+    .then((data) => {
+      window.location.href = "/"
+    })
+  }
   return (
     <Flex
       w={{ sm: "100%", md: "auto" }}
@@ -112,7 +124,7 @@ export default function HeaderLinks(props) {
           maxW={{ base: "360px", md: "unset" }}>
           <Flex jusitfy='space-between' w='100%' mb='20px'>
             <Text fontSize='md' fontWeight='600' color={textColor}>
-              Notifications
+              Powiadomienia
             </Text>
             <Text
               fontSize='sm'
@@ -120,7 +132,7 @@ export default function HeaderLinks(props) {
               color={textColorBrand}
               ms='auto'
               cursor='pointer'>
-              Mark all read
+              Oznacz wszystkie jako przeczytane
             </Text>
           </Flex>
           <Flex flexDirection='column'>
@@ -147,7 +159,7 @@ export default function HeaderLinks(props) {
         </MenuList>
       </Menu>
 
-      <Menu>
+      {/*<Menu>
         <MenuButton p='0px'>
           <Icon
             mt='6px'
@@ -202,7 +214,7 @@ export default function HeaderLinks(props) {
             </Link>
           </Flex>
         </MenuList>
-      </Menu>
+  </Menu>*/}
 
       <ThemeEditor navbarIcon={navbarIcon} /> 
 
@@ -236,7 +248,7 @@ export default function HeaderLinks(props) {
               fontSize='sm'
               fontWeight='700'
               color={textColor}>
-              👋&nbsp; Hey, Adela
+              👋&nbsp; Witaj {"{username}"}
             </Text>
           </Flex>
           <Flex flexDirection='column' p='10px'>
@@ -245,22 +257,23 @@ export default function HeaderLinks(props) {
               _focus={{ bg: "none" }}
               borderRadius='8px'
               px='14px'>
-              <Text fontSize='sm'>Profile Settings</Text>
+              <NavLink to="/admin/profile"><Text fontSize='sm'>Ustawienia profilu</Text></NavLink>
             </MenuItem>
-            <MenuItem
+            {/*<MenuItem
               _hover={{ bg: "none" }}
               _focus={{ bg: "none" }}
               borderRadius='8px'
               px='14px'>
               <Text fontSize='sm'>Newsletter Settings</Text>
-            </MenuItem>
+</MenuItem>*/}
             <MenuItem
               _hover={{ bg: "none" }}
               _focus={{ bg: "none" }}
               color='red.400'
               borderRadius='8px'
-              px='14px'>
-              <Text fontSize='sm'>Log out</Text>
+              px='14px'
+              onClick={logout}>
+              <Text fontSize='sm'>Wyloguj się</Text>
             </MenuItem>
           </Flex>
         </MenuList>
