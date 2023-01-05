@@ -130,7 +130,7 @@ function SignIn() {
           
           
           <FormControl>
-            <form action="javascript:verifyLogin()">
+            <form action="javascript:changePass()">
             <FormLabel
               display='flex'
               ms='4px'

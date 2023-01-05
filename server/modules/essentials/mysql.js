@@ -51,7 +51,6 @@ module.exports = class MySQL {
   }
 
   changePass(data, callback){
-    console.log(data)
     this.con.query("UPDATE users SET password = '" + data.password + "' WHERE user_id='" + data.user_id +"';", 
     function (err, result) {
       if (err) throw err;
