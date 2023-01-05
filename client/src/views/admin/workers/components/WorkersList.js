@@ -199,7 +199,7 @@ const {
 <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Błąd</ModalHeader>
+          <ModalHeader>Usuwanie użytkownika</ModalHeader>
           <ModalCloseButton />
           <ModalBody id="message-id">
           

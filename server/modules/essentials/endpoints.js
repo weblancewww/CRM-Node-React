@@ -137,18 +137,23 @@ function endpoints(){
 
         if(session.continue == false) return;
         
-        bcrypt.hash(req.body.new_pass, 10, function(err, hash) {
-            console.log('test3')
-            session.hashPass = hash;
-            
-            });
-        db.changePass({user_id:session.user_id,password:session.hashPass},(data) =>{
-            console.log(data)
-            console.log('test4')
-            // res.json(data)
-        })
-
+        session.hashPass = await hashPass(req.body.new_pass)
         
+        const cp = await changePass(db)
+        if(cp.affectedRows == 1){
+            return res.json({
+                type: "success",
+                message: "Pomyślnie zmieniono hasło!",
+                data: {}
+            })
+        } else {
+            return res.json({
+                type: "error",
+                message: "Błąd dodawania do bazy danych!",
+                data: {}
+            })
+        }
+
     })
 
     app.post("/api/WorkersList", (req, res) => {
@@ -172,7 +177,12 @@ function endpoints(){
         }
 
         db.workersDelete(req.body.user_id,function(data){
-           res.json(data)
+            res.json({
+                type: "error",
+                message: "Pomyślnie usunięto użytkownika!",
+                data: {}
+                
+            })
         })
        });
 
