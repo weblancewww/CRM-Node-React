@@ -3,15 +3,15 @@ import { Avatar, Box, Flex, Text, useColorModeValue, SimpleGrid} from "@chakra-u
 import Card from "components/card/Card.js";
 import React from "react";
 import Information from "views/admin/profile/components/Information";
-import { Input, InputGroup, InputRightElement, Button, FormControl} from "@chakra-ui/react"
+import { Input, InputGroup, InputRightElement, Button, FormControl, FormLabel} from "@chakra-ui/react"
 
 export default function PassChange() {
 
   // Chakra Color Mode
   const textColorPrimary = useColorModeValue("secondaryGray.900", "white");
   const textColorSecondary = "gray.400";
-  
-  
+  const brandStars = useColorModeValue("brand.500", "brand.400");
+  const textColor = useColorModeValue("navy.700", "white");
   const [show1, setShow1] = React.useState(false)
   const [show2, setShow2] = React.useState(false)
   const [show3, setShow3] = React.useState(false)
@@ -19,24 +19,30 @@ export default function PassChange() {
   const handleClick2 = () => setShow2(!show2)
   const handleClick3 = () => setShow3(!show3)
 
+
+  const [message, setMessage] = React.useState(false);
+  const [messageType, setMessageType] = React.useState(false);
 const changePass = async () => {
     var old_pass = document.getElementById('old_pass')
     var new_pass = document.getElementById('new_pass')
     var repeat_new_pass = document.getElementById('repeat_new_pass')
     var error_message = document.getElementById('error_message')
-
+    
     if(!old_pass.value || !new_pass.value || !repeat_new_pass.value){
-        error_message.innerHTML = 'Usupełnij wszystkie pola'
+        setMessage('Uzupełnij wszystkie pola')
+        setMessageType('error')
         return
     }
 
     if(old_pass.value == new_pass.value) {
-        error_message.innerHTML = 'Nowe hasło musi być różne od aktualnego'
+        setMessage('Nowe hasło musi być różne od aktualnego')
+        setMessageType('error')
         return
     }
 
     if(repeat_new_pass.value != new_pass.value) {
-        error_message.innerHTML = 'Hasła nie są identyczne'
+        setMessage('Hasła nie są identyczne')
+        setMessageType('error')
         return
     }
 
@@ -54,7 +60,16 @@ const changePass = async () => {
     
       }).then((res) => res.json())
         .then((data) => {
-        // setData(data)
+          setMessage(data.message)
+          setMessageType(data.type)
+          if(data.type=="success"){
+            old_pass.value = ""
+            new_pass.value = ""
+            repeat_new_pass.value = ""
+            setTimeout(()=>{
+              setMessage("")
+            }, 4000)
+          }
       }); 
     
 }
@@ -74,13 +89,22 @@ const changePass = async () => {
         Zmiana hasła
       </Text>
       <Text color={textColorSecondary} fontSize='md' me='26px' mb='40px'>
-        Tutaj możesz zmienić hasło jeśli tego potrzebujesz bo swoje ustawiłeś zbyt proste tumanie.
+        Tutaj możesz zmienić hasło jeśli tego potrzebujesz.
       </Text>
 
       <FormControl>
         
-    
+      <FormLabel
+              display='flex'
+              ms='4px'
+              fontSize='sm'
+              fontWeight='500'
+              color={textColor}
+              mb='8px'>
+              Aktualne hasło<Text color={brandStars}>*</Text>
+            </FormLabel>
       <InputGroup size="lg" mb="20px">
+
       <Input id="old_pass"
         pr="4.5rem"
         type={show1 ? "text" : "password"}
@@ -89,11 +113,19 @@ const changePass = async () => {
       />
       <InputRightElement width="4.5rem" borderRadius="16px">
         <Button h="1.75rem" size="sm" onClick={handleClick1} borderRadius="10px">
-          {show1 ? "Hide" : "Show"}
+          {show1 ? "Ukryj" : "Pokaż"}
         </Button>
       </InputRightElement>
     </InputGroup>
-
+    <FormLabel
+              display='flex'
+              ms='4px'
+              fontSize='sm'
+              fontWeight='500'
+              color={textColor}
+              mb='8px'>
+              Nowe hasło<Text color={brandStars}>*</Text>
+            </FormLabel>
     <InputGroup size="lg" mb="20px">
       <Input id="new_pass"
         pr="4.5rem"
@@ -103,21 +135,29 @@ const changePass = async () => {
       />
       <InputRightElement width="4.5rem" borderRadius="16px">
         <Button h="1.75rem" size="sm" onClick={handleClick2} borderRadius="10px">
-          {show2 ? "Hide" : "Show"}
+          {show2 ? "Ukryj" : "Pokaż"}
         </Button>
       </InputRightElement>
     </InputGroup>
-
+    <FormLabel
+              display='flex'
+              ms='4px'
+              fontSize='sm'
+              fontWeight='500'
+              color={textColor}
+              mb='8px'>
+              Potwierdź nowe hasło<Text color={brandStars}>*</Text>
+            </FormLabel>
     <InputGroup size="lg" mb="20px">
       <Input id="repeat_new_pass"
         pr="4.5rem"
         type={show3 ? "text" : "password"}
-        placeholder="Powtórz nowe hasło"
+        placeholder="Potwierdź nowe hasło"
         borderRadius="16px"
       />
       <InputRightElement width="4.5rem" borderRadius="16px">
         <Button h="1.75rem" size="sm" onClick={handleClick3} borderRadius="10px">
-          {show3 ? "Hide" : "Show"}
+          {show3 ?"Ukryj" : "Pokaż"}
         </Button>
       </InputRightElement>
     </InputGroup>
@@ -126,14 +166,14 @@ const changePass = async () => {
     <Flex justifyContent={"right"} gap="30px">
         <Text 
         // color={"red.600"} 
-        color={"green.600"}
+        color={messageType=="success"?"green.600":messageType=="error"?"red.600":""}
         fontSize='sm'
         fontWeight='500'
         id="error_message"
         >
-        Kominikat błędu
+        {message?message:""}
         </Text>
-        <Button onClick={changePass} width="30%" variant="brand">Save</Button>
+        <Button onClick={changePass} width="30%" variant="brand">Zmień hasło</Button>
     </Flex>
     
     </FormControl>

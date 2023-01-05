@@ -21,29 +21,6 @@ import {
 } from "variables/charts";
 
 export default function TotalSpent(props) {
-
-  
-  const [data2, setData] = React.useState(null);
-  React.useEffect(() => {
-    fetch("/api", {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json"
-      },
-      body: JSON.stringify({
-        name: "zyzu"
-      })
-    })
-      .then((res) => res.json())
-      .then((data2) => setData(data2));
-  }, []);
-
-  if(data2){
-    console.log(data2)
-  }
-
-
-
   const { ...rest } = props;
 
   // Chakra Color Mode
@@ -77,7 +54,7 @@ export default function TotalSpent(props) {
             fontSize='xl'
             fontWeight='700'
             lineHeight='100%'>
-            {!data2?"Loading..":data2}
+            Wykres
           </Text>
           <Button
             ms='auto'

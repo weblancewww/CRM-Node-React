@@ -16,6 +16,27 @@ const cookieParser = require("cookie-parser")
             //porownanie
         }
         });*/
+        const getPass = function (db){
+            return new Promise((resolve, reject) =>{
+                db.getPass({user_id:session.user_id}, function(data){
+                    resolve(data)
+                })
+            })
+        }
+        const hashPass = function (pass){
+            return new Promise((resolve, reject) =>{
+                bcrypt.hash(pass, 10, function(err, hash) {
+                    resolve(hash)
+                    });
+            })
+        }
+        const changePass = function (db){
+            return new Promise((resolve, reject) =>{
+                db.changePass({user_id:session.user_id,password:session.hashPass},(data) =>{
+                    resolve(data)
+                })
+            })
+        }
 function endpoints(){
     app.use(cookieParser())
 
@@ -71,55 +92,51 @@ function endpoints(){
             return
         }
         db.userInfo({user_id:session.user_id},(data) =>{
-            console.log(data)
             data.map(x => data = x)
             res.json(data)
         })
     })
-
-    app.post("/api/auth/changePassword", (req, res) =>{
+    
+    app.post("/api/auth/changePassword", async (req, res) =>{
         if(!session.logged){
             return
         }
+        var data = await getPass(db);
+        data.map(x => data = x)
+            
+        session.continue = true
 
-        db.getPass({user_id:session.user_id},(data) =>{
-            
-            data.map(x => data = x)
-            
-            session.continue = true
-            
-            console.log(req.body.old_pass,data.password,'test')
-            bcrypt.compare(req.body.old_pass, data.password, function(err, result) {
-                console.log(req.body.old_pass,data.password,result,'test2')
-                if (!result) {
-                    
-                    console.log(req.body.old_pass)
-                    res.json({
-                        type: "error",
-                        message: "Podano niepoprawne aktualne hasło!",
-                        data: {}
+        bcrypt.compare(req.body.old_pass, data.password, function(err, result) {
+            if (!result) {
+                res.json({
+                    type: "error",
+                    message: "Podano niepoprawne aktualne hasło!",
+                    data: {}
                         
-                    })
-                    session.continue = false
-                } 
-                
-                });
-        })
+                })
+                session.continue = false
+            } 
+        });
 
         if(session.continue == false) return;
         
-        bcrypt.hash(req.body.new_pass, 10, function(err, hash) {
-            console.log('test3')
-            session.hashPass = hash;
-            
-            });
-        db.changePass({user_id:session.user_id,password:session.hashPass},(data) =>{
-            console.log(data)
-            console.log('test4')
-            // res.json(data)
-        })
-
+        session.hashPass = await hashPass(req.body.new_pass)
         
+        const cp = await changePass(db)
+        if(cp.affectedRows == 1){
+            return res.json({
+                type: "success",
+                message: "Pomyślnie zmieniono hasło!",
+                data: {}
+            })
+        } else {
+            return res.json({
+                type: "error",
+                message: "Błąd dodawania do bazy danych!",
+                data: {}
+            })
+        }
+
     })
 
 }
