@@ -59,4 +59,20 @@ module.exports = class MySQL {
     });
   }
 
+  showAllWorkers(callback) {
+    this.con.query("SELECT * FROM users;",
+     function (err, result) {
+      if (err) throw err;
+      return callback(result)
+    });
+  }
+  
+  workersDelete(id,callback) {
+    this.con.query("DELETE FROM users WHERE user_id='" + id +"';",
+     function (err, result) {
+      if (err) throw err;
+      return callback(result)
+    });
+  }
+
 }

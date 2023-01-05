@@ -23,6 +23,7 @@ function endpoints(){
         console.log(req.body)
         res.json("test")
     });
+
     app.post("/api/auth/session", (req, res) =>{
         res.json({session: session.logged})
     })
@@ -121,6 +122,31 @@ function endpoints(){
 
         
     })
+
+    app.post("/api/WorkersList", (req, res) => {
+
+
+        db.showAllWorkers(function(data){
+           res.json(data)
+        })
+       });
+
+       app.post("/api/WorkersList/delete", (req, res) => {
+
+        if(req.body.user_id == session.user_id){
+            res.json({
+                type: "error",
+                message: "Nie można usunąć samego siebie!",
+                data: {}
+                
+            })
+            return
+        }
+
+        db.workersDelete(req.body.user_id,function(data){
+           res.json(data)
+        })
+       });
 
 }
 
