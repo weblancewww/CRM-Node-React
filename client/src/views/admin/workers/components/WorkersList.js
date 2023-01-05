@@ -42,8 +42,59 @@ import { MdEdit } from "react-icons/md";
 
 export default function WorkersList(props) {
 
-  
+  const [message, setMessage] = React.useState(false);
+  const [messageType, setMessageType] = React.useState(false);
 
+  const addUser = async () => {
+    const inputs = document.querySelectorAll(".addUserInputs")
+    var error_message = document.getElementById('error_message')
+
+    var is_empty = false
+
+    inputs.forEach(element => {
+      if(!element.value){
+        is_empty = true
+        return 
+      }
+      
+    });
+    if(is_empty){
+      setMessage('Uzupełnij wszystkie pola!')
+      setMessageType('error')
+        return
+    }
+    var inputValues = []
+    inputs.forEach(e=>{
+      inputValues[e.name] = e.value
+    })
+    console.log(inputValues)
+    await fetch("/api/WorkersList/add", {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json"
+      },
+      body: JSON.stringify({
+        first_name: inputValues['first_name'],
+        last_name: inputValues['last_name'],
+        email: inputValues['email'],
+        password: inputValues['password'],
+        positions: inputValues['positions']
+      })
+  
+    }).then((res) => res.json())
+      .then((data) => {
+        setMessage(data.message)
+        setMessageType(data.type)
+        if(data.type =="success") {
+          GetWorkers()
+          inputs.forEach(e=>{
+            e.value = ""
+         })
+        }
+        
+    }); 
+     
+  }
 
 
   const deleteById = async (id) => {
@@ -75,8 +126,11 @@ export default function WorkersList(props) {
     
 }
 const { isOpen, onOpen, onClose } = useDisclosure()
-const { isOpenAdd, onOpenAdd, onCloseAdd } = useDisclosure()
-    onOpenAdd()
+const {     
+  isOpen: isOpenAdd,    
+  onOpen: onOpenAdd,    
+  onClose: onCloseAdd  } = useDisclosure()
+    
 
   const [users, setData] = React.useState(null);
   const GetWorkers = async () => {
@@ -162,13 +216,32 @@ const { isOpenAdd, onOpenAdd, onCloseAdd } = useDisclosure()
       <Modal isOpen={isOpenAdd} onClose={onCloseAdd}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Błąd</ModalHeader>
+          <ModalHeader>Dodawanie nowego użytkownika</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-          
+          <Flex gap={"20px"} flexDirection="column">
+          <Input className="addUserInputs" type="text" name="first_name" placeholder="Imie" size="md" borderRadius="14px" />
+          <Input className="addUserInputs" type="text" name="last_name" placeholder="Nazwisko" size="md" borderRadius="14px" />
+          <Input className="addUserInputs" type="email" name="email" placeholder="Email" size="md" borderRadius="14px" />
+          <Input className="addUserInputs" type="password" name="password" placeholder="Hasło" size="md" borderRadius="14px" />
+          <Input className="addUserInputs" type="text" name="positions" placeholder="Stanowisko" size="md" borderRadius="14px" />
+          </Flex>
           </ModalBody>
           <ModalFooter>
-            <Button colorScheme="brand" mr={3} onClick={onCloseAdd}>
+          <Text 
+            // color={"red.600"} 
+            mr={"20px"}
+            color={messageType=="success"?"green.600":messageType=="error"?"red.600":""}
+            fontSize='sm'
+            fontWeight='500'
+            id="error_message"
+            >
+            {message?message:""}
+          </Text >
+          <Button colorScheme="brand" mr={3} onClick={addUser}>
+              Dodaj
+            </Button>
+            <Button  variant="ghost" mr={3} onClick={onCloseAdd}>
               Zamknij
             </Button>
             {/* <Button variant="ghost">Secondary Action</Button> */}

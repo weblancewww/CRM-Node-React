@@ -16,12 +16,33 @@ const cookieParser = require("cookie-parser")
             //porownanie
         }
         });*/
+
+const checkMail = (db, email) => {
+    return new Promise((resolve, reject) =>{
+        db.checkMail(email, function(data){
+            resolve(data)
+        })
+    })
+}
+const hashPass = function (pass){
+    return new Promise((resolve, reject) =>{
+        bcrypt.hash(pass, 10, function(err, hash) {
+            resolve(hash)
+            });
+    })
+}
+const workersAdd = function (values,db){
+    return new Promise((resolve, reject) =>{
+        db.workersAdd(values,function(data){
+            resolve(data)
+        })
+    })
+}
 function endpoints(){
     app.use(cookieParser())
 
     app.post("/api", (req, res) => {
         console.log(req.body)
-        res.json("test")
     });
 
     app.post("/api/auth/session", (req, res) =>{
@@ -146,6 +167,34 @@ function endpoints(){
         db.workersDelete(req.body.user_id,function(data){
            res.json(data)
         })
+       });
+
+       app.post("/api/WorkersList/add", async (req, res) => {
+        const existingEmail = await checkMail(db, req.body.email)
+        if(existingEmail.length){
+            return res.json({
+                type: "error",
+                message: "Podany email już istnieje!",
+                data: {}
+                
+            })
+        }
+        req.body.password = await hashPass(req.body.password)
+
+        const  wA = await workersAdd(req.body, db)
+        if(wA.affectedRows == 1){
+            return res.json({
+                type: "success",
+                message: "Pomyślnie dodano użytkownika!",
+                data: {}
+            })
+        } else {
+            return res.json({
+                type: "error",
+                message: "Błąd dodawania do bazy danych!",
+                data: {}
+            })
+        }
        });
 
 }

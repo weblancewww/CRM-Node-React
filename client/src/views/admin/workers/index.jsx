@@ -57,7 +57,6 @@ export default function Workers() {
         gap={{ base: "20px", xl: "20px" }}>
         <WorkersList
           
-          
         />
         
       </Grid>

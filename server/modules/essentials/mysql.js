@@ -75,4 +75,19 @@ module.exports = class MySQL {
     });
   }
 
+  workersAdd(data,callback) {
+    this.con.query("INSERT INTO users (first_name, last_name, email, password, positions) VALUES ('" + data.first_name + "', '" + data.last_name + "', '"+ data.email + "', '"+ data.password + "', '"+ data.positions + "');",
+     function (err, result) {
+      if (err) throw err;
+      return callback(result)
+    });
+  }
+  checkMail(email,callback) {
+    this.con.query("SELECT email FROM users WHERE email='"+email+"';",
+     function (err, result) {
+      if (err) throw err;
+      return callback(result)
+    });
+  }
+
 }
