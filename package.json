@@ -1,0 +1,15 @@
+{
+  "name": "weblance-nodejs-reactjs-crm",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "nodemon ./server/app.js",
+    "client": "cd client && npm start",
+    "iall": "concurrently \"npm run serveri\" \"npm run clienti\"",
+    "serveri": "cd server && npm install",
+    "clienti": "cd client && npm install"
+  },
+  "dependencies": {
+    "concurrently": "^7.6.0"
+  }
+}
