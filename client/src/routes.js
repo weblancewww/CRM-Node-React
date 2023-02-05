@@ -18,6 +18,7 @@ import RTL from "views/admin/rtl";
 
 // Auth Imports
 import SignInCentered from "views/auth/signIn";
+import Workers from "views/admin/workers";
 
 const routes = [
   {
@@ -69,7 +70,7 @@ const routes = [
     layout: "/admin",
     path: "/workers",
     icon: <Icon as={MdLock} width='20px' height='20px' color='inherit' />,
-    component: SignInCentered,
+    component: Workers,
     // notVisible: true
   },
 
