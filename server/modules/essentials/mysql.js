@@ -23,7 +23,25 @@ module.exports = class MySQL {
        console.log('Database connected successfully');
        connection.release();
      });
-     //this.defaultDatabases();
+     this.defaultDatabases();
+   }
+
+   
+   defaultDatabases(){
+    this.con.query(`
+      CREATE TABLE IF NOT EXISTS users (
+        user_id int NOT NULL AUTO_INCREMENT,
+        email TEXT NOT NULL,
+        password TEXT NOT NULL,
+        first_name TEXT NOT NULL,
+        last_name TEXT NOT NULL,
+        positions TEXT NOT NULL,
+        photo TEXT DEFAULT NULL,
+        PRIMARY KEY (user_id)
+    );`, 
+    function (err, result) {
+      if (err) throw err;
+    });
    }
 
    verifyUser(data, callback){
