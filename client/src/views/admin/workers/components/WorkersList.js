@@ -32,6 +32,16 @@ import {
   ModalCloseButton,
 } from "@chakra-ui/react"
 
+import {
+  Drawer,
+  DrawerBody,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerCloseButton,
+} from "@chakra-ui/react"
+
 import { Button, ButtonGroup } from "@chakra-ui/react"
 
 // Custom components
@@ -44,6 +54,7 @@ export default function WorkersList(props) {
 
   const [message, setMessage] = React.useState(false);
   const [messageType, setMessageType] = React.useState(false);
+  
 
   const addUser = async () => {
     const inputs = document.querySelectorAll(".addUserInputs")
@@ -150,6 +161,7 @@ const {
   React.useEffect( async () => {
   GetWorkers()
   }, []);
+
   const { title, ranking, link, image, ...rest } = props;
   // Chakra Color Mode
   

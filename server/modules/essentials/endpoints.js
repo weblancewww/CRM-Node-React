@@ -5,6 +5,7 @@ var db =  new mysql();
 const bcrypt = require("bcrypt")
 const session = require("express-session")
 const cookieParser = require("cookie-parser")
+const rand = require("random-key")
 
 /*bcrypt.genSalt(10, (err, salt) => {
     bcrypt.hash("admin", salt, function(err, hash) {
@@ -20,6 +21,13 @@ const cookieParser = require("cookie-parser")
         const getPass = function (db){
             return new Promise((resolve, reject) =>{
                 db.getPass({user_id:session.user_id}, function(data){
+                    resolve(data)
+                })
+            })
+        }
+        const getPassSingle = function (db,id){
+            return new Promise((resolve, reject) =>{
+                db.getPass({user_id:id}, function(data){
                     resolve(data)
                 })
             })
@@ -54,6 +62,32 @@ const changePass = function (db){
         })
     })
 }
+
+const changePassSingle = function (db,id,pass){
+    return new Promise((resolve, reject) =>{
+        db.changePass({user_id:id,password:pass},(data) =>{
+            resolve(data)
+        })
+    })
+}
+
+function parseCookies (request) {
+    const list = {};
+    const cookieHeader = request.headers?.cookie;
+    if (!cookieHeader) return list;
+
+    cookieHeader.split(`;`).forEach(function(cookie) {
+        let [ name, ...rest] = cookie.split(`=`);
+        name = name?.trim();
+        if (!name) return;
+        const value = rest.join(`=`).trim();
+        if (!value) return;
+        list[name] = decodeURIComponent(value);
+    });
+
+    return list;
+}
+
 function endpoints(){
     app.use(cookieParser())
 
@@ -64,6 +98,11 @@ function endpoints(){
     app.post("/api/auth/session", (req, res) =>{
         res.json({session: session.logged})
     })
+
+
+    const login_page = "/login";
+    const login_page_endpoint = "/login/access";
+
     app.post("/api/auth/login", (req, res) => {
         db.verifyUser(req.body, (data)=>{
             if(!data){
@@ -74,10 +113,21 @@ function endpoints(){
                     data: {}
                 })
                 return;
-            }
+            } 
             data.map(x => data = x)
             bcrypt.compare(req.body.password, data.password, function(err, result) {
                 if (result) {
+
+
+            var keyDefined = rand.generate(25);
+            res.cookie('user_'+config.login_key_secret+'_loggin', keyDefined)
+            session[keyDefined] = {
+                user_name: data.email,
+                user_perm: data.positions,
+                user_id: data.user_id
+            }
+            // db.custom("UPDATE users SET users_last_login = CURRENT_TIMESTAMP WHERE users_id = "+data[0].users_id, function(){});
+            // res.cookie('user_id', data[0].users_id)
                     
                     session.logged = true;
                     session.user_id = data.user_id;
@@ -109,6 +159,14 @@ function endpoints(){
             return
         }
         db.userInfo({user_id:session.user_id},(data) =>{
+            data.map(x => data = x)
+            res.json(data)
+        })
+    })
+
+
+    app.post("/api/user/info/single", (req, res) =>{
+        db.userInfo({user_id:req.body.id},(data) =>{
             data.map(x => data = x)
             res.json(data)
         })
@@ -155,6 +213,50 @@ function endpoints(){
         }
 
     })
+
+
+    app.post("/api/auth/changePasswordSingle", async (req, res) =>{
+        if(!session.logged){
+            return
+        }
+        var data = await getPassSingle(db,req.body.id);
+        data.map(x => data = x)
+
+        bcrypt.compare(req.body.old_pass, data.password, async function(err, result) {
+            if (!result) {
+                res.json({
+                    type: "error",
+                    message: "Podano niepoprawne aktualne hasło!",
+                    data: {}
+                        
+                })
+            } else {
+                var hashss = await hashPass(req.body.new_pass)
+                cp = await changePassSingle(db,req.body.id, hashss)
+                if(cp.affectedRows == 1){
+                    return res.json({
+                        type: "success",
+                        message: "Pomyślnie zmieniono hasło!",
+                        data: {}
+                    })
+                } else {
+                    return res.json({
+                        type: "error",
+                        message: "Błąd dodawania do bazy danych!",
+                        data: {}
+                    })
+                }
+            }
+        });    
+    })
+
+    app.post("/api/WorkersList/Solo", (req, res) => {
+
+
+        db.showAllWorkers(function(data){
+           res.json(data)
+        })
+       });
 
     app.post("/api/WorkersList", (req, res) => {
 
