@@ -19,10 +19,25 @@ import {
     useSortBy,
     useTable,
   } from "react-table";
+
+  import {
+    Menu,
+    MenuButton,
+    MenuList,
+    MenuItem,
+    MenuItemOption,
+    MenuGroup,
+    MenuOptionGroup,
+    MenuIcon,
+    MenuCommand,
+    MenuDivider,
+   
+  } from "@chakra-ui/react"
+
+  import {  ChevronDownIcon } from '@chakra-ui/icons'
   
   // Custom components
   import Card from "components/card/Card";
-  import Menu from "components/menu/MainMenu";
   
   // Assets
   import { MdCheckCircle, MdCancel, MdOutlineError } from "react-icons/md";
@@ -51,6 +66,8 @@ import {
       initialState,
     } = tableInstance;
     initialState.pageSize = 5;
+
+    const consolelog = () => {console.log("TEST2")}
   
     const textColor = useColorModeValue("secondaryGray.900", "white");
     const borderColor = useColorModeValue("gray.200", "whiteAlpha.100");
@@ -68,7 +85,16 @@ import {
             lineHeight='100%'>
             Lista pracowników
           </Text>
-          <Menu />
+          <Menu>
+            <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
+              Akcje
+            </MenuButton>
+            <MenuList>
+              <MenuItem onClick={consolelog}>Dodaj nowego pracownika</MenuItem>
+              <MenuItem>Pobierz wykaz godzin</MenuItem>
+              <MenuItem>Pobierz wykaz płac</MenuItem>
+            </MenuList>
+          </Menu>
         </Flex>
         <Table {...getTableProps()} variant='simple' color='gray.500' mb='24px'>
           <Thead>

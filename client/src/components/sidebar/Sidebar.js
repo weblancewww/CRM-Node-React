@@ -35,7 +35,7 @@ function Sidebar(props) {
   );
   // Chakra Color Mode
   let sidebarBg = useColorModeValue("white", "navy.800");
-  let sidebarMargins = "0px";
+  let sidebarMargins = "-1px";
 
   // SIDEBAR
   return (
