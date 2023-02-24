@@ -95,13 +95,16 @@ export default function Workers() {
 
 
     const [users, setData] = React.useState(null);
-    const GetWorkers = async () => {
-    
+    const GetWorkers = async (pg) => {
+        console.log(pg)
         await fetch("/api/WorkersList", {
         method: "POST",
         headers: {
             "Content-type": "application/json"
         },
+        body: JSON.stringify({
+          page: parseInt(pg)
+        })
         
         })
         .then((res) => res.json())
@@ -110,7 +113,7 @@ export default function Workers() {
 
     }
     React.useEffect( async () => {
-    await GetWorkers()
+    await GetWorkers(1)
     }, []);
 
 
@@ -152,9 +155,7 @@ export default function Workers() {
           "2xl": "1fr",
         }}
         gap={{ base: "20px", xl: "20px" }}>
-        <WorkersList
-          
-        />
+    
       </Grid>
       <SimpleGrid
         mb='20px'
@@ -165,6 +166,7 @@ export default function Workers() {
           columnsData={columnsWorkers}
           tableData={users}
           onOpen={handleOpen}
+          refresh={GetWorkers}
         />
         :""}
       </SimpleGrid>

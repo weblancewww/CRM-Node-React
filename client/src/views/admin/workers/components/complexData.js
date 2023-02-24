@@ -31,6 +31,8 @@ import {
     MenuIcon,
     MenuCommand,
     MenuDivider,
+    Stack,
+    Spinner
    
   } from "@chakra-ui/react"
 
@@ -38,12 +40,46 @@ import {
   
   // Custom components
   import Card from "components/card/Card";
+  import { MdCheckCircle, MdCancel, MdOutlineError } from "react-icons/md";
+  const awaited = async (pag, refresh, setCurrent, current) => {
+    setCurrent(pag);
+    await refresh(pag)
+  }
+
+  
+  
+  function Pagination(totalPages,refresh, setCurrent, current) { 
+    const renderPageButtons = () => {
+      const buttons = [];
+  
+      for (let i = 1; i <= totalPages; i++) {
+        buttons.push(
+          <Button
+          size="sm"
+            key={i}
+            variant={i === current ? "solid" : "outline"}
+            onClick={() => awaited(i, refresh, setCurrent)}
+          >
+            {i}
+          </Button>
+        );
+      }
+  
+      return buttons;
+    };
+  
+    return (
+      <Stack direction="row" spacing={2} padding={3}>
+        {renderPageButtons()}
+      </Stack>
+    );
+  }
   
   // Assets
-  import { MdCheckCircle, MdCancel, MdOutlineError } from "react-icons/md";
+
   export default function ColumnsTable(props) {
-    const { columnsData, tableData, ref,onOpen } = props;
-  
+    const { columnsData, tableData, ref,onOpen, refresh } = props;
+    const [current, setCurrent] = React.useState(1)
     const columns = useMemo(() => columnsData, [columnsData]);
     const data = useMemo(() => tableData, [tableData]);
   
@@ -85,6 +121,7 @@ import {
             lineHeight='100%'>
             Lista pracowników
           </Text>
+          {data?"":<Spinner />}
           <Menu>
             <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
               Akcje
@@ -122,7 +159,7 @@ import {
             {page.map((row, index) => {
               prepareRow(row);
               return (
-                <Tr {...row.getRowProps()} key={index}>
+                <Tr onClick={() => onOpen(row.cells[0].value)} {...row.getRowProps()} key={index}>
                   {row.cells.map((cell, index) => {
                     let data = "";
                     if (cell.column.Header === "photo") {
@@ -162,6 +199,7 @@ import {
             })}
           </Tbody>
         </Table>
+        {Pagination(10,refresh,setCurrent, current)}
       </Card>
     );
   }
