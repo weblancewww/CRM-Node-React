@@ -13,7 +13,7 @@ export const renderTrack = ({ style, ...props }) => {
     bottom: 2,
     top: 2,
     borderRadius: 3,
-    right: 0,
+    right:0,
   };
   return <div style={{ ...style, ...trackStyle }} {...props} />;
 };
@@ -30,7 +30,7 @@ export const renderView = ({ style, ...props }) => {
   };
   return (
     <Box
-      me={{ base: "0px !important", lg: "-16px !important" }}
+      me={{ base: "0px !important", lg: "-17px !important" }}
       style={{ ...style, ...viewStyle }}
       {...props}
     />

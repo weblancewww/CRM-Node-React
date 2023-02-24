@@ -253,7 +253,7 @@ function endpoints(){
     app.post("/api/WorkersList/Solo", (req, res) => {
 
 
-        db.showAllWorkers(function(data){
+        db.showAllWorkers(req.body.page,function(data){
            res.json(data)
         })
        });
@@ -261,7 +261,7 @@ function endpoints(){
     app.post("/api/WorkersList", (req, res) => {
 
 
-        db.showAllWorkers(function(data){
+        db.showAllWorkers(req.body.page,function(data){
            res.json(data)
         })
        });

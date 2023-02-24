@@ -76,8 +76,9 @@ module.exports = class MySQL {
     });
   }
 
-  showAllWorkers(callback) {
-    this.con.query("SELECT * FROM users;",
+  showAllWorkers(pg,callback) {
+    console.log(pg)
+    this.con.query(`SELECT * FROM users LIMIT 1 OFFSET ${(pg - 1)*1};`,
      function (err, result) {
       if (err) throw err;
       return callback(result)

@@ -19,16 +19,67 @@ import {
     useSortBy,
     useTable,
   } from "react-table";
+
+  import {
+    Menu,
+    MenuButton,
+    MenuList,
+    MenuItem,
+    MenuItemOption,
+    MenuGroup,
+    MenuOptionGroup,
+    MenuIcon,
+    MenuCommand,
+    MenuDivider,
+    Stack,
+    Spinner
+   
+  } from "@chakra-ui/react"
+
+  import {  ChevronDownIcon } from '@chakra-ui/icons'
   
   // Custom components
   import Card from "components/card/Card";
-  import Menu from "components/menu/MainMenu";
+  import { MdCheckCircle, MdCancel, MdOutlineError } from "react-icons/md";
+  const awaited = async (pag, refresh, setCurrent, current) => {
+    setCurrent(pag);
+    await refresh(pag)
+  }
+
+  
+  
+  function Pagination(totalPages,refresh, setCurrent, current) { 
+    const renderPageButtons = () => {
+      const buttons = [];
+  
+      for (let i = 1; i <= totalPages; i++) {
+        buttons.push(
+          <Button
+          size="sm"
+            key={i}
+            variant={i === current ? "solid" : "outline"}
+            onClick={() => awaited(i, refresh, setCurrent)}
+          >
+            {i}
+          </Button>
+        );
+      }
+  
+      return buttons;
+    };
+  
+    return (
+      <Stack direction="row" spacing={2} padding={3}>
+        {renderPageButtons()}
+      </Stack>
+    );
+  }
   
   // Assets
-  import { MdCheckCircle, MdCancel, MdOutlineError } from "react-icons/md";
+
   export default function ColumnsTable(props) {
-    const { columnsData, tableData, ref,onOpen } = props;
-  
+    const { columnsData, tableData, ref,onOpen, refresh } = props;
+    const [current, setCurrent] = React.useState(1)
     const columns = useMemo(() => columnsData, [columnsData]);
     const data = useMemo(() => tableData, [tableData]);
   
@@ -51,6 +102,8 @@ import {
       initialState,
     } = tableInstance;
     initialState.pageSize = 5;
+
+    const consolelog = () => {console.log("TEST2")}
   
     const textColor = useColorModeValue("secondaryGray.900", "white");
     const borderColor = useColorModeValue("gray.200", "whiteAlpha.100");
@@ -68,7 +121,17 @@ import {
             lineHeight='100%'>
             Lista pracowników
           </Text>
-          <Menu />
+          {data?"":<Spinner />}
+          <Menu>
+            <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
+              Akcje
+            </MenuButton>
+            <MenuList>
+              <MenuItem onClick={consolelog}>Dodaj nowego pracownika</MenuItem>
+              <MenuItem>Pobierz wykaz godzin</MenuItem>
+              <MenuItem>Pobierz wykaz płac</MenuItem>
+            </MenuList>
+          </Menu>
         </Flex>
         <Table {...getTableProps()} variant='simple' color='gray.500' mb='24px'>
           <Thead>
@@ -96,7 +159,7 @@ import {
             {page.map((row, index) => {
               prepareRow(row);
               return (
-                <Tr {...row.getRowProps()} key={index}>
+                <Tr onClick={() => onOpen(row.cells[0].value)} {...row.getRowProps()} key={index}>
                   {row.cells.map((cell, index) => {
                     let data = "";
                     if (cell.column.Header === "photo") {
@@ -136,6 +199,7 @@ import {
             })}
           </Tbody>
         </Table>
+        {Pagination(10,refresh,setCurrent, current)}
       </Card>
     );
   }
