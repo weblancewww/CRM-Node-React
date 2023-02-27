@@ -41,14 +41,14 @@ import {
   // Custom components
   import Card from "components/card/Card";
   import { MdCheckCircle, MdCancel, MdOutlineError } from "react-icons/md";
-  const awaited = async (pag, refresh, setCurrent, current) => {
+  const awaited = async (pag, refresh, setCurrent, current,selectedOption) => {
     setCurrent(pag);
-    await refresh(pag)
+    await refresh(pag,selectedOption)
   }
 
   
   
-  function Pagination(totalPages,refresh, setCurrent, current) { 
+  function Pagination(totalPages,refresh, setCurrent, current, selectedOption) { 
     const renderPageButtons = () => {
       const buttons = [];
   
@@ -58,7 +58,7 @@ import {
           size="sm"
             key={i}
             variant={i === current ? "solid" : "outline"}
-            onClick={() => awaited(i, refresh, setCurrent)}
+            onClick={() => awaited(i, refresh, setCurrent, "", selectedOption)}
           >
             {i}
           </Button>
@@ -81,6 +81,15 @@ import {
     const [current, setCurrent] = React.useState(1)
     const columns = useMemo(() => columnsData, [columnsData]);
     const data = useMemo(() => tableData, [tableData]);
+    const [memoryLimit, setMemoryLimit] = React.useState(localStorage.getItem('limit')?localStorage.getItem('limit'):10);
+    const [selectedOption, setSelectedOption] = React.useState(memoryLimit);
+    const handleOptionChange = async (event) => {
+      console.log(event.target.value)
+      localStorage.setItem('limit', event.target.value);
+      setSelectedOption(event.target.value);
+      await refresh(current,event.target.value)
+      
+    };
   
     const tableInstance = useTable(
       {
@@ -102,7 +111,6 @@ import {
     } = tableInstance;
     initialState.pageSize = 5;
 
-    const consolelog = () => {console.log("TEST2")}
   
     const textColor = useColorModeValue("secondaryGray.900", "white");
     const borderColor = useColorModeValue("gray.200", "whiteAlpha.100");
@@ -121,18 +129,18 @@ import {
             Lista pracowników
           </Text>
           {data?"":<Spinner />}
-          <Select width={"80px"}>
-        <option>10</option>
-        <option>30</option>
-        <option>50</option>
-        <option>100</option>
-      </Select>
+          <Select value={selectedOption} width={"80px"} onChange={handleOptionChange}>
+            <option>1</option>
+            <option>30</option>
+            <option>50</option>
+            <option>100</option>
+          </Select>
           <Menu>
             <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
               Akcje
             </MenuButton>
             <MenuList>
-              <MenuItem onClick={consolelog}>Dodaj nowego pracownika</MenuItem>
+              <MenuItem>Dodaj nowego pracownika</MenuItem>
               <MenuItem>Pobierz wykaz godzin</MenuItem>
               <MenuItem>Pobierz wykaz płac</MenuItem>
             </MenuList>
@@ -204,7 +212,7 @@ import {
             })}
           </Tbody>
         </Table>
-        {Pagination(10,refresh,setCurrent, current)}
+        {Pagination(10,refresh,setCurrent, current,selectedOption)}
       </Card>
     );
   }

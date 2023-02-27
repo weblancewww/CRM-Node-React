@@ -25,11 +25,8 @@ import { Box, Grid, SimpleGrid } from "@chakra-ui/react";
 import Banner from "views/admin/workers/components/Banner";
 // Custom components
 import banner from "assets/img/auth/banner.png";
-import WorkersList from "views/admin/workers/components/WorkersList";
 import ComplexTable from "views/admin/workers/components/complexData";
 
-
-import tableDataComplex from "views/admin/dataTables/variables/tableDataComplex.json";
 
 import {
   Drawer,
@@ -39,13 +36,8 @@ import {
   DrawerOverlay,
   DrawerContent,
   DrawerCloseButton,
-  Button,
-  Input
+  Button
 } from "@chakra-ui/react"
-
-import Card from "components/card/Card";
-
-
 
 import { useDisclosure } from "@chakra-ui/react"
 
@@ -95,7 +87,7 @@ export default function Workers() {
 
 
     const [users, setData] = React.useState(null);
-    const GetWorkers = async (pg) => {
+    const GetWorkers = async (pg,limit) => {
         console.log(pg)
         await fetch("/api/WorkersList", {
         method: "POST",
@@ -103,7 +95,8 @@ export default function Workers() {
             "Content-type": "application/json"
         },
         body: JSON.stringify({
-          page: parseInt(pg)
+          page: parseInt(pg),
+          limit: limit
         })
         
         })
@@ -113,7 +106,7 @@ export default function Workers() {
 
     }
     React.useEffect( async () => {
-    await GetWorkers(1)
+    await GetWorkers(1,10)
     }, []);
 
 
@@ -121,7 +114,7 @@ export default function Workers() {
 
     const handleOpen = async (id) => {
       try {
-        const response = await fetch("/api/user/info/single", {
+        await fetch("/api/user/info/single", {
           method: "POST",
           headers: {
               "Content-type": "application/json"
