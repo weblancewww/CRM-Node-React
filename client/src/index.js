@@ -20,7 +20,6 @@ fetch("/api/auth/session", {
   var logged = false;
   if(data.session){
     logged = true
-    console.log(logged)
   }
   ReactDOM.render(
     <ChakraProvider theme={theme}>

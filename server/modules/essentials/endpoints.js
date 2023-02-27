@@ -96,7 +96,11 @@ function endpoints(){
     });
 
     app.post("/api/auth/session", (req, res) =>{
-        res.json({session: session.logged})
+        if(session[parseCookies(req)["user_"+config.login_key_secret+"_loggin"]]){
+            res.json({session: true})
+        } else {
+            res.json({session: false})
+        }
     })
 
 
@@ -149,7 +153,7 @@ function endpoints(){
         })
     });
     app.post("/api/auth/logout", (req, res) =>{
-        session.logged = false;
+        delete session[parseCookies(req)["user_"+config.login_key_secret+"_loggin"]];
         res.cookie('user_id', null)
         res.json('wylogowno')
     })

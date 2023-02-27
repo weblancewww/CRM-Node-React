@@ -32,8 +32,8 @@ import {
     MenuCommand,
     MenuDivider,
     Stack,
-    Spinner
-   
+    Spinner,
+    Select
   } from "@chakra-ui/react"
 
   import {  ChevronDownIcon } from '@chakra-ui/icons'
@@ -64,7 +64,6 @@ import {
           </Button>
         );
       }
-  
       return buttons;
     };
   
@@ -113,7 +112,7 @@ import {
         w='100%'
         px='0px'
         overflowX={{ sm: "scroll", lg: "hidden" }}>
-        <Flex px='25px' justify='space-between' mb='20px' align='center'>
+        <Flex px='25px' gap='20px' mb='20px' align='center'>
           <Text
             color={textColor}
             fontSize='22px'
@@ -122,6 +121,12 @@ import {
             Lista pracowników
           </Text>
           {data?"":<Spinner />}
+          <Select width={"80px"}>
+        <option>10</option>
+        <option>30</option>
+        <option>50</option>
+        <option>100</option>
+      </Select>
           <Menu>
             <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
               Akcje
