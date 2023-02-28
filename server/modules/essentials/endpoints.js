@@ -167,11 +167,11 @@ function endpoints(){
     })
     app.post('/api/data/users/avatar_new', upload.single('avatar'), (req, res) => {
         const file = req.file; // file passed from client
-        
-        fs.rename(file.path, `server/../uploads/images/${file.originalname}`, function (err) {
-            db.update({photo:file.originalname},"users","user_id",req.body.user_id, ()=>{})
+        r = (Math.random() + 1).toString(36).substring(2);
+        fs.rename(file.path, `server/../uploads/images/${r}_${file.originalname}`, function (err) {
+            db.update({photo:r+"_"+file.originalname},"users","user_id",req.body.user_id, ()=>{})
             if (err) throw err;
-            res.sendFile(file.originalname, { root:'server/../uploads/images' }, (err) => {
+            res.sendFile(r+"_"+file.originalname, { root:'server/../uploads/images' }, (err) => {
                 if (err) {
                   res.json({})
                 }

@@ -99,7 +99,6 @@ export default function Banner(props) {
         {name}
       </Text>
       <Text color={textColorSecondary} fontSize='sm'>
-        admin
       </Text>
       <SimpleGrid columns={{sm: 1, md: 2, lg: 2}} gap='20px'>
         <FormControl id="first-name" isRequired>
