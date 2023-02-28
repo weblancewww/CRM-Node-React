@@ -1,5 +1,5 @@
 {
-    "PORT": 3010,
+    "PORT": 35010,
     "DATABASE": {
         "HOST": "localhost",
         "USER": "admin",
