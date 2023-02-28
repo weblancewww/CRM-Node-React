@@ -89,6 +89,12 @@ export const globalStyles = {
       input: {
         color: mode("navy.900", "secondaryGray.300")(props),
       },
+      select: {
+        color: mode("navy.900", "secondaryGray.300")(props),
+      },
+      option: {
+        color: mode("navy.900", "secondaryGray.300")(props),
+      },
       html: {
         fontFamily: "DM Sans",
       },

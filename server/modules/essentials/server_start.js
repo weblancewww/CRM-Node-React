@@ -17,7 +17,7 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '../../../client/build', 'manifest.json'));
   });
 
-const PORT = process.env.PORT || 3010;
+const PORT = process.env.PORT || config.PORT;
 
 function start_server(){
     app.listen(config.PORT, () => {

@@ -76,12 +76,45 @@ module.exports = class MySQL {
     });
   }
 
-  showAllWorkers(pg,callback) {
-    console.log(pg)
-    this.con.query(`SELECT * FROM users LIMIT 1 OFFSET ${(pg - 1)*1};`,
-     function (err, result) {
+  custom(sql, callback){
+    this.con.query(sql, 
+    function (err, result) {
       if (err) throw err;
-      return callback(result)
+      return callback(result);
+    });
+  }
+
+  update(sql, db,where_row,where_data, callback){
+
+    this.rows = "";
+    this.i = 1;
+    for (var key in sql) {
+      if (sql.hasOwnProperty(key)) {
+        if(this.i < Object.keys(sql).length) {
+          this.rows += key+" = " + "'"+sql[key]+"', ";
+        } else {
+          this.rows += key+" = " + "'"+sql[key]+"' ";
+        }
+      }
+      this.i++;
+  }
+  console.log("UPDATE "+db+" SET "+this.rows+" WHERE "+where_row+" = '"+where_data+"'")
+  this.con.query("UPDATE "+db+" SET "+this.rows+" WHERE "+where_row+" = '"+where_data+"'", function (err, result) {
+    if (err) throw err;
+    return callback(true);
+  });
+  }
+
+  showAllWorkers(pg,limit,callback) {
+    var db = this.con;
+    db.query(`SELECT * FROM users LIMIT ${limit} OFFSET ${parseInt(pg - 1)*parseInt(limit)};`,
+     function (err, result) {
+      db.query(`SELECT COUNT(*)/${limit} as pages FROM users`,
+      function (err, pages) {
+        console.log(Math.ceil(pages[0].pages))
+        return callback({data: result,pages:Math.ceil(pages[0].pages)})
+      });
+
     });
   }
   

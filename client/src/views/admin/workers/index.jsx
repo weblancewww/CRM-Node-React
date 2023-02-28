@@ -25,11 +25,8 @@ import { Box, Grid, SimpleGrid } from "@chakra-ui/react";
 import Banner from "views/admin/workers/components/Banner";
 // Custom components
 import banner from "assets/img/auth/banner.png";
-import WorkersList from "views/admin/workers/components/WorkersList";
 import ComplexTable from "views/admin/workers/components/complexData";
 
-
-import tableDataComplex from "views/admin/dataTables/variables/tableDataComplex.json";
 
 import {
   Drawer,
@@ -39,13 +36,8 @@ import {
   DrawerOverlay,
   DrawerContent,
   DrawerCloseButton,
-  Button,
-  Input
+  Button
 } from "@chakra-ui/react"
-
-import Card from "components/card/Card";
-
-
 
 import { useDisclosure } from "@chakra-ui/react"
 
@@ -56,6 +48,35 @@ import { useDisclosure } from "@chakra-ui/react"
 
 import React from "react";
 
+async function saveData(id,setMessage){
+  console.log(id)
+  var user_name = document.getElementById("first-name").value;
+  var user_lastname = document.getElementById("last-name").value;
+  var email = document.getElementById("email").value;
+  var perms = document.getElementById("position").value;
+  console.log(user_name);
+
+
+  await fetch("/api/data/update/user", {
+    method: "POST",
+    headers: {
+      "Content-type": "application/json"
+    },
+    body: JSON.stringify({
+        data: {
+          first_name:user_name,
+          last_name: user_lastname,
+          email:email,
+          positions: perms,
+        },
+        id: id.user_id 
+      })
+    }).then((res) => res.json())
+      .then((data) => {
+        setMessage(data.message)
+        console.log("UPDATED")
+    }); 
+}
 
 export default function Workers() {
 
@@ -95,7 +116,7 @@ export default function Workers() {
 
 
     const [users, setData] = React.useState(null);
-    const GetWorkers = async (pg) => {
+    const GetWorkers = async (pg,limit) => {
         console.log(pg)
         await fetch("/api/WorkersList", {
         method: "POST",
@@ -103,7 +124,8 @@ export default function Workers() {
             "Content-type": "application/json"
         },
         body: JSON.stringify({
-          page: parseInt(pg)
+          page: parseInt(pg),
+          limit: limit
         })
         
         })
@@ -113,15 +135,15 @@ export default function Workers() {
 
     }
     React.useEffect( async () => {
-    await GetWorkers(1)
+    await GetWorkers(1,10)
     }, []);
 
-
+    
     const [user, setUser] = React.useState(null);
 
     const handleOpen = async (id) => {
       try {
-        const response = await fetch("/api/user/info/single", {
+        await fetch("/api/user/info/single", {
           method: "POST",
           headers: {
               "Content-type": "application/json"
@@ -137,6 +159,7 @@ export default function Workers() {
         console.error(error);
       }
     };
+
 
   return (
     <Box pt={{ base: "130px", md: "80px", xl: "80px" }}>
@@ -164,7 +187,8 @@ export default function Workers() {
         {users?
         <ComplexTable
           columnsData={columnsWorkers}
-          tableData={users}
+          tableData={users.data}
+          pages={users.pages}
           onOpen={handleOpen}
           refresh={GetWorkers}
         />
@@ -193,7 +217,7 @@ export default function Workers() {
             <Button variant="outline" mr={3} onClick={onClose}>
               Zamknij
             </Button>
-            <Button colorScheme="brand">Zapisz</Button>
+            <Button colorScheme="brand" onClick={() => {saveData(user)}}>Zapisz</Button>
           </DrawerFooter>
         </DrawerContent>
       </Drawer>

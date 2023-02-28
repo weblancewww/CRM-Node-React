@@ -33,7 +33,10 @@ import {
     MenuDivider,
     Stack,
     Spinner,
-    Select
+    Select,
+    Wrap,
+    WrapItem,
+    Box
   } from "@chakra-ui/react"
 
   import {  ChevronDownIcon } from '@chakra-ui/icons'
@@ -41,14 +44,14 @@ import {
   // Custom components
   import Card from "components/card/Card";
   import { MdCheckCircle, MdCancel, MdOutlineError } from "react-icons/md";
-  const awaited = async (pag, refresh, setCurrent, current) => {
+  const awaited = async (pag, refresh, setCurrent, current,selectedOption) => {
     setCurrent(pag);
-    await refresh(pag)
+    await refresh(pag,selectedOption)
   }
 
   
   
-  function Pagination(totalPages,refresh, setCurrent, current) { 
+  function Pagination(totalPages,refresh, setCurrent, current, selectedOption) { 
     const renderPageButtons = () => {
       const buttons = [];
   
@@ -58,7 +61,7 @@ import {
           size="sm"
             key={i}
             variant={i === current ? "solid" : "outline"}
-            onClick={() => awaited(i, refresh, setCurrent)}
+            onClick={() => awaited(i, refresh, setCurrent, "", selectedOption)}
           >
             {i}
           </Button>
@@ -77,10 +80,19 @@ import {
   // Assets
 
   export default function ColumnsTable(props) {
-    const { columnsData, tableData, ref,onOpen, refresh } = props;
+    const { columnsData, tableData, ref,onOpen, refresh,pages } = props;
     const [current, setCurrent] = React.useState(1)
     const columns = useMemo(() => columnsData, [columnsData]);
     const data = useMemo(() => tableData, [tableData]);
+    const [memoryLimit, setMemoryLimit] = React.useState(localStorage.getItem('limit')?localStorage.getItem('limit'):10);
+    const [selectedOption, setSelectedOption] = React.useState(memoryLimit);
+    const handleOptionChange = async (event) => {
+      console.log(event.target.value)
+      localStorage.setItem('limit', event.target.value);
+      setSelectedOption(event.target.value);
+      await refresh(current,event.target.value)
+      
+    };
   
     const tableInstance = useTable(
       {
@@ -102,7 +114,6 @@ import {
     } = tableInstance;
     initialState.pageSize = 5;
 
-    const consolelog = () => {console.log("TEST2")}
   
     const textColor = useColorModeValue("secondaryGray.900", "white");
     const borderColor = useColorModeValue("gray.200", "whiteAlpha.100");
@@ -112,32 +123,45 @@ import {
         w='100%'
         px='0px'
         overflowX={{ sm: "scroll", lg: "hidden" }}>
-        <Flex px='25px' gap='20px' mb='20px' align='center'>
-          <Text
+            <Wrap spacing={4} px='25px' gap='20px' mb='20px' >
+      <WrapItem style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <Box minW="200px" >
+        <Text minW='200px'
             color={textColor}
             fontSize='22px'
             fontWeight='700'
             lineHeight='100%'>
             Lista pracowników
           </Text>
+        </Box>
+      </WrapItem>
+      <WrapItem>
+        <Box minW="70px">
           {data?"":<Spinner />}
-          <Select width={"80px"}>
-        <option>10</option>
-        <option>30</option>
-        <option>50</option>
-        <option>100</option>
-      </Select>
+          <Select minW='100px' value={selectedOption} width={"80px"} onChange={handleOptionChange}>
+            <option>1</option>
+            <option>30</option>
+            <option>50</option>
+            <option>100</option>
+          </Select>
+        </Box>
+      </WrapItem>
+      <WrapItem>
+        <Box>
           <Menu>
             <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
               Akcje
             </MenuButton>
             <MenuList>
-              <MenuItem onClick={consolelog}>Dodaj nowego pracownika</MenuItem>
+              <MenuItem onClick={() => {console.log("TEST")}}>Dodaj nowego pracownika</MenuItem>
               <MenuItem>Pobierz wykaz godzin</MenuItem>
               <MenuItem>Pobierz wykaz płac</MenuItem>
             </MenuList>
           </Menu>
-        </Flex>
+        </Box>
+      </WrapItem>
+    </Wrap>
+    
         <Table {...getTableProps()} variant='simple' color='gray.500' mb='24px'>
           <Thead>
             {headerGroups.map((headerGroup, index) => (
@@ -204,7 +228,7 @@ import {
             })}
           </Tbody>
         </Table>
-        {Pagination(10,refresh,setCurrent, current)}
+        {Pagination(pages,refresh,setCurrent, current,selectedOption)}
       </Card>
     );
   }

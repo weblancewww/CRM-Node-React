@@ -45,7 +45,7 @@
     "deploy": "gh-pages -d build",
     "sitemap": "babel-node ./sitemap-builder.js"
   },
-  "proxy": "http://localhost:3010",
+  "proxy": "http://localhost:35010",
   "resolutions": {
     "react-error-overlay": "6.0.9"
   },
