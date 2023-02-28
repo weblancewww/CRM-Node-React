@@ -33,7 +33,10 @@ import {
     MenuDivider,
     Stack,
     Spinner,
-    Select
+    Select,
+    Wrap,
+    WrapItem,
+    Box
   } from "@chakra-ui/react"
 
   import {  ChevronDownIcon } from '@chakra-ui/icons'
@@ -77,7 +80,7 @@ import {
   // Assets
 
   export default function ColumnsTable(props) {
-    const { columnsData, tableData, ref,onOpen, refresh } = props;
+    const { columnsData, tableData, ref,onOpen, refresh,pages } = props;
     const [current, setCurrent] = React.useState(1)
     const columns = useMemo(() => columnsData, [columnsData]);
     const data = useMemo(() => tableData, [tableData]);
@@ -120,32 +123,45 @@ import {
         w='100%'
         px='0px'
         overflowX={{ sm: "scroll", lg: "hidden" }}>
-        <Flex px='25px' gap='20px' mb='20px' align='center'>
-          <Text
+            <Wrap spacing={4} px='25px' gap='20px' mb='20px' >
+      <WrapItem style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <Box minW="200px" >
+        <Text minW='200px'
             color={textColor}
             fontSize='22px'
             fontWeight='700'
             lineHeight='100%'>
             Lista pracowników
           </Text>
+        </Box>
+      </WrapItem>
+      <WrapItem>
+        <Box minW="70px">
           {data?"":<Spinner />}
-          <Select value={selectedOption} width={"80px"} onChange={handleOptionChange}>
+          <Select minW='100px' value={selectedOption} width={"80px"} onChange={handleOptionChange}>
             <option>1</option>
             <option>30</option>
             <option>50</option>
             <option>100</option>
           </Select>
+        </Box>
+      </WrapItem>
+      <WrapItem>
+        <Box>
           <Menu>
             <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
               Akcje
             </MenuButton>
             <MenuList>
-              <MenuItem>Dodaj nowego pracownika</MenuItem>
+              <MenuItem onClick={() => {console.log("TEST")}}>Dodaj nowego pracownika</MenuItem>
               <MenuItem>Pobierz wykaz godzin</MenuItem>
               <MenuItem>Pobierz wykaz płac</MenuItem>
             </MenuList>
           </Menu>
-        </Flex>
+        </Box>
+      </WrapItem>
+    </Wrap>
+    
         <Table {...getTableProps()} variant='simple' color='gray.500' mb='24px'>
           <Thead>
             {headerGroups.map((headerGroup, index) => (
@@ -212,7 +228,7 @@ import {
             })}
           </Tbody>
         </Table>
-        {Pagination(10,refresh,setCurrent, current,selectedOption)}
+        {Pagination(pages,refresh,setCurrent, current,selectedOption)}
       </Card>
     );
   }

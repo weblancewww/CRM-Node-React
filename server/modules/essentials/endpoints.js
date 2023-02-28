@@ -6,6 +6,9 @@ const bcrypt = require("bcrypt")
 const session = require("express-session")
 const cookieParser = require("cookie-parser")
 const rand = require("random-key")
+const fs = require('fs')
+const multer = require('multer');
+const upload = multer({ dest: 'assets/uimgs/' });
 
 /*bcrypt.genSalt(10, (err, salt) => {
     bcrypt.hash("admin", salt, function(err, hash) {
@@ -152,6 +155,29 @@ function endpoints(){
                 });
         })
     });
+
+
+    app.post("/data/images/:filename", (req, res) =>{
+        const fileName = req.params.filename;
+        res.sendFile(fileName, { root:'server/../uploads/images' }, (err) => {
+            if (err) {
+              res.json({})
+            }
+        });
+    })
+    app.post('/api/data/users/avatar_new', upload.single('avatar'), (req, res) => {
+        const file = req.file; // file passed from client
+        
+        fs.rename(file.path, `server/../uploads/images/${file.originalname}`, function (err) {
+            db.update({photo:file.originalname},"users","user_id",req.body.user_id, ()=>{})
+            if (err) throw err;
+            res.sendFile(file.originalname, { root:'server/../uploads/images' }, (err) => {
+                if (err) {
+                  res.json({})
+                }
+            });
+        });
+      });
     app.post("/api/auth/logout", (req, res) =>{
         delete session[parseCookies(req)["user_"+config.login_key_secret+"_loggin"]];
         res.cookie('user_id', null)
@@ -261,6 +287,11 @@ function endpoints(){
            res.json(data)
         })
        });
+    app.post("/api/data/update/user", (req, res) => {
+        db.update(req.body.data,"users","user_id",req.body.id,function(data){
+            res.json(data)
+        })
+    });
 
     app.post("/api/WorkersList", (req, res) => {
 

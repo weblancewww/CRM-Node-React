@@ -15,6 +15,54 @@ import {
 import PassChange from "views/admin/workers/components/PassChange";
 export default function Banner(props) {
   const { banner, avatar, name, job, posts, followers, following, data } = props;
+
+  const [imageUrl, setImageUrl] = React.useState("");
+  const fileInputRef = React.useRef(null);
+
+  const handleFileChange = (event) => {
+    const selectedFile = event.target.files[0];
+    console.log(data.user_id,selectedFile)
+
+    event.preventDefault();
+    const formData = new FormData();
+    formData.append("avatar", selectedFile);
+    formData.append("user_id", data.user_id);
+    console.log(formData);
+    fetch("/api/data/users/avatar_new", {
+      method: "POST",
+      body: formData,
+    })
+      .then((response) => response.blob())
+      .then((data) => {
+        setImageUrl(URL.createObjectURL(data));
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
+  console.log(data.photo)
+  React.useEffect(() => {
+    fetch(`/data/images/${data.photo}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+      .then((response) => response.blob())
+      .then((blob) => {
+        setImageUrl(URL.createObjectURL(blob));
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
+
+
+  const handleClick = () => {
+    fileInputRef.current.click();
+  };
+  
   // Chakra Color Mode
   console.log(data)
   const textColorPrimary = useColorModeValue("secondaryGray.900", "white");
@@ -38,13 +86,15 @@ export default function Banner(props) {
       />
       <Avatar
         mx='auto'
-        src={avatar}
+        src={imageUrl}
+        onClick={handleClick}
         h='87px'
         w='87px'
         mt='-43px'
         border='4px solid'
         borderColor={borderColor}
       />
+        <input type="file" name="avatar" ref={fileInputRef} onChange={handleFileChange} hidden/>
       <Text color={textColorPrimary} fontWeight='bold' fontSize='xl' mt='10px'>
         {name}
       </Text>
