@@ -15,6 +15,9 @@ export default function Dashboard(props) {
   // states and functions
   const [fixed] = useState(false);
   const [toggleSidebar, setToggleSidebar] = useState(false);
+
+ 
+
   // functions for changing the states from components
   const getRoute = () => {
     return window.location.pathname !== "/admin/full-screen-maps";
@@ -90,16 +93,12 @@ export default function Dashboard(props) {
   };
 
 
-  const getAccess = () => {
-    console.log("ACCESS GRATED")
-  }
 
   const getRoutes = (routes) => {
     return routes.map((prop, key) => {
       if (prop.layout === "/admin") {
         return (
           <Route
-            render={getAccess}
             path={prop.layout + prop.path}
             component={prop.component}
             key={key}

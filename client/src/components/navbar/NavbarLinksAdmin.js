@@ -13,6 +13,7 @@ import {
   Text,
   useColorModeValue,
   useColorMode,
+  Box
 } from "@chakra-ui/react";
 // Custom Components
 import { ItemContent } from "components/menu/ItemContent";
@@ -54,53 +55,80 @@ export default function HeaderLinks(props) {
       window.location.href = "/"
     })
   }
+
+
+  // React.useEffect(() => {
+  //   fetch(`/data/images/${data.photo}`, {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json"
+  //     }
+  //   })
+  //     .then((response) => response.blob())
+  //     .then((blob) => {
+  //       setImageUrl(URL.createObjectURL(blob));
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //     });
+  // }, []);
+
+  const [imageUrl, setImageUrl] = React.useState("");
+  const [username, setUsername] = React.useState("");
+
+  
+  React.useEffect(() => {
+    fetch("/api/auth/session", {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json"
+      }}).then((res) => res.json())
+    .then((data) => {
+        setUsername(data.user.user_name)
+        fetch(`/data/images/${data.user.photo}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          }
+        })
+          .then((response) => response.blob())
+          .then((blob) => {
+            console.log(blob)
+            setImageUrl(URL.createObjectURL(blob));
+            console.log(imageUrl)
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+    });
+  }, []);
+
   return (
     <Flex
       w={{ sm: "100%", md: "auto" }}
       alignItems='center'
+      justifyContent='space-between'
       flexDirection='row'
       bg={menuBg}
       flexWrap={secondary ? { base: "wrap", md: "nowrap" } : "unset"}
       p='10px'
-      borderRadius='30px'
+      borderRadius='15px'
       boxShadow={shadow}>
-      <SearchBar
+      {/* <SearchBar
         mb={secondary ? { base: "10px", md: "unset" } : "unset"}
         me='10px'
         borderRadius='30px'
-      />
-      <Flex
-        bg={ethBg}
-        display={secondary ? "flex" : "none"}
-        borderRadius='30px'
-        ms='auto'
-        p='6px'
-        align='center'
-        me='6px'>
-        <Flex
-          align='center'
-          justify='center'
-          bg={ethBox}
-          h='29px'
-          w='29px'
-          borderRadius='30px'
-          me='7px'>
-          <Icon color={ethColor} w='9px' h='14px' as={FaEthereum} />
-        </Flex>
-        <Text
-          w='max-content'
-          color={ethColor}
-          fontSize='sm'
-          fontWeight='700'
-          me='6px'>
-          1,924
-          <Text as='span' display={{ base: "none", md: "unset" }}>
-            {" "}
-            ETH
-          </Text>
-        </Text>
-      </Flex>
+      /> */}
       <SidebarResponsive routes={routes} />
+      <Box>
+      <Flex
+      w={{ sm: "100%", md: "auto" }}
+      alignItems='center'
+      justifyContent='end'
+      flexDirection='row'
+      bg={menuBg}
+      flexWrap={secondary ? { base: "wrap", md: "nowrap" } : "unset"}
+      boxShadow={shadow}>
       <Menu>
         <MenuButton p='0px'>
           <Icon
@@ -220,15 +248,22 @@ export default function HeaderLinks(props) {
 
       <Menu>
         <MenuButton p='0px'>
-          <Avatar
+        <Avatar
+        mx='auto'
+        src={imageUrl}
+        h='40px'
+        w='40px'
+        border='4px solid'
+      />
+          {/* <Avatar
             _hover={{ cursor: "pointer" }}
+            src={imageUrl}
             color='white'
-            name='Adela Parkson'
-            bg='#11047A'
+            bg='red'
             size='sm'
             w='40px'
             h='40px'
-          />
+          /> */}
         </MenuButton>
         <MenuList
           boxShadow={shadow}
@@ -248,7 +283,7 @@ export default function HeaderLinks(props) {
               fontSize='sm'
               fontWeight='700'
               color={textColor}>
-              👋&nbsp; Witaj {"{username}"}
+              👋&nbsp; Witaj {username}
             </Text>
           </Flex>
           <Flex flexDirection='column' p='10px'>
@@ -278,6 +313,8 @@ export default function HeaderLinks(props) {
           </Flex>
         </MenuList>
       </Menu>
+      </Flex>
+      </Box>
     </Flex>
   );
 }

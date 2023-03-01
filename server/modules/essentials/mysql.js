@@ -42,10 +42,20 @@ module.exports = class MySQL {
     function (err, result) {
       if (err) throw err;
     });
+    this.con.query(`
+      CREATE TABLE IF NOT EXISTS roles (
+        roles_id int NOT NULL AUTO_INCREMENT,
+        roles_name TEXT NOT NULL,
+        roles_value TEXT NOT NULL,
+        PRIMARY KEY (roles_id)
+    );`, 
+    function (err, result) {
+      if (err) throw err;
+    });
    }
 
    verifyUser(data, callback){
-    this.con.query("SELECT user_id, email, password FROM users WHERE email='" + data.email +"';", 
+    this.con.query("SELECT * FROM users WHERE email='" + data.email +"';", 
     function (err, result) {
       if (err) throw err;
       return callback(result);
@@ -107,7 +117,7 @@ module.exports = class MySQL {
 
   showAllWorkers(pg,limit,callback) {
     var db = this.con;
-    db.query(`SELECT * FROM users LIMIT ${limit} OFFSET ${parseInt(pg - 1)*parseInt(limit)};`,
+    db.query(`SELECT roles.roles_name as role_name, users.* FROM users LEFT JOIN roles ON roles.roles_value = users.positions LIMIT ${limit} OFFSET ${parseInt(pg - 1)*parseInt(limit)};`,
      function (err, result) {
       db.query(`SELECT COUNT(*)/${limit} as pages FROM users`,
       function (err, pages) {

@@ -80,8 +80,8 @@ import {
   // Assets
 
   export default function ColumnsTable(props) {
-    const { columnsData, tableData, ref,onOpen, refresh,pages } = props;
-    const [current, setCurrent] = React.useState(1)
+    const { columnsData, tableData, ref,onOpen, refresh,pages, setOpenAdd, current, setCurrent } = props;
+    console.log(tableData)
     const columns = useMemo(() => columnsData, [columnsData]);
     const data = useMemo(() => tableData, [tableData]);
     const [memoryLimit, setMemoryLimit] = React.useState(localStorage.getItem('limit')?localStorage.getItem('limit'):10);
@@ -90,7 +90,7 @@ import {
       console.log(event.target.value)
       localStorage.setItem('limit', event.target.value);
       setSelectedOption(event.target.value);
-      await refresh(current,event.target.value)
+      await refresh(1,event.target.value)
       
     };
   
@@ -139,7 +139,7 @@ import {
         <Box minW="70px">
           {data?"":<Spinner />}
           <Select minW='100px' value={selectedOption} width={"80px"} onChange={handleOptionChange}>
-            <option>1</option>
+            <option>10</option>
             <option>30</option>
             <option>50</option>
             <option>100</option>
@@ -153,7 +153,7 @@ import {
               Akcje
             </MenuButton>
             <MenuList>
-              <MenuItem onClick={() => {console.log("TEST")}}>Dodaj nowego pracownika</MenuItem>
+              <MenuItem onClick={() => setOpenAdd(true)}>Dodaj nowego pracownika</MenuItem>
               <MenuItem>Pobierz wykaz godzin</MenuItem>
               <MenuItem>Pobierz wykaz płac</MenuItem>
             </MenuList>

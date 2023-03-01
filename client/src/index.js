@@ -44,21 +44,6 @@ fetch("/api/auth/session", {
     </ChakraProvider>,
     document.getElementById("root")
   );
-  // ReactDOM.render(
-  //   <ChakraProvider theme={theme}>
-  //       <ThemeEditorProvider>
-  //         <BrowserRouter>
-  //         <Switch>
-  //             <Route path={`/admin`} component={AdminLayout}  />
-  //             {/* <Redirect from='/auth/sign-in' to='/admin/panel' push={true} /> */}
-  //             <Redirect from='/' to='/admin/panel'  />
-  //             <Redirect from='*' to='/admin/panel'  />
-  //         </Switch>
-  //         </BrowserRouter>
-  //       </ThemeEditorProvider>
-  //   </ChakraProvider>,
-  //   document.getElementById("root")
-  // );
 });
 
 

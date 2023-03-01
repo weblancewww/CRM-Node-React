@@ -95,16 +95,9 @@ const changePass = async () => {
 
       <FormControl>
         
-      <FormLabel
-              display='flex'
-              ms='4px'
-              fontSize='sm'
-              fontWeight='500'
-              color={textColor}
-              mb='8px'>
-              Aktualne hasło<Text color={brandStars}>*</Text>
-            </FormLabel>
-      <InputGroup size="lg" mb="20px">
+      <FormLabel>Aktualne hasło</FormLabel>
+            
+      <InputGroup size="md" mb="20px">
 
       <Input id="old_pass"
         pr="4.5rem"
@@ -118,16 +111,8 @@ const changePass = async () => {
         </Button>
       </InputRightElement>
     </InputGroup>
-    <FormLabel
-              display='flex'
-              ms='4px'
-              fontSize='sm'
-              fontWeight='500'
-              color={textColor}
-              mb='8px'>
-              Nowe hasło<Text color={brandStars}>*</Text>
-            </FormLabel>
-    <InputGroup size="lg" mb="20px">
+            <FormLabel>Nowe hasło</FormLabel>
+    <InputGroup size="md" mb="20px">
       <Input id="new_pass"
         pr="4.5rem"
         type={show2 ? "text" : "password"}
@@ -140,16 +125,8 @@ const changePass = async () => {
         </Button>
       </InputRightElement>
     </InputGroup>
-    <FormLabel
-              display='flex'
-              ms='4px'
-              fontSize='sm'
-              fontWeight='500'
-              color={textColor}
-              mb='8px'>
-              Potwierdź nowe hasło<Text color={brandStars}>*</Text>
-            </FormLabel>
-    <InputGroup size="lg" mb="20px">
+    <FormLabel>Potwierdź nowe hasło</FormLabel>
+    <InputGroup size="md" mb="20px">
       <Input id="repeat_new_pass"
         pr="4.5rem"
         type={show3 ? "text" : "password"}

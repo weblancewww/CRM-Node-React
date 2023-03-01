@@ -100,7 +100,12 @@ function endpoints(){
 
     app.post("/api/auth/session", (req, res) =>{
         if(session[parseCookies(req)["user_"+config.login_key_secret+"_loggin"]]){
-            res.json({session: true})
+            db.custom(`SELECT * FROM users WHERE user_id = ${session[parseCookies(req)["user_"+config.login_key_secret+"_loggin"]].user_id}`, function(perms){
+                console.log('server/../uploads/images/' + perms[0].photo)
+                res.json({session: true,user:{perms: perms[0].positions, user_name: perms[0].first_name,photo: perms[0].photo}})
+            })
+            
+            
         } else {
             res.json({session: false})
         }
@@ -302,18 +307,7 @@ function endpoints(){
        });
 
        app.post("/api/WorkersList/delete", (req, res) => {
-
-        if(req.body.user_id == session.user_id){
-            res.json({
-                type: "error",
-                message: "Nie można usunąć samego siebie!",
-                data: {}
-                
-            })
-            return
-        }
-
-        db.workersDelete(req.body.user_id,function(data){
+        db.workersDelete(req.body.id,function(data){ 
             res.json({
                 type: "error",
                 message: "Pomyślnie usunięto użytkownika!",
@@ -324,7 +318,8 @@ function endpoints(){
        });
 
        app.post("/api/WorkersList/add", async (req, res) => {
-        const existingEmail = await checkMail(db, req.body.email)
+        console.log(req.body)
+        const existingEmail = await checkMail(db, req.body.data.email)
         if(existingEmail.length){
             return res.json({
                 type: "error",
@@ -333,9 +328,9 @@ function endpoints(){
                 
             })
         }
-        req.body.password = await hashPass(req.body.password)
+        req.body.data.password = await hashPass(req.body.data.password)
 
-        const  wA = await workersAdd(req.body, db)
+        const  wA = await workersAdd(req.body.data, db)
         if(wA.affectedRows == 1){
             return res.json({
                 type: "success",
