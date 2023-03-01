@@ -1,10 +1,10 @@
 {
     "PORT": 35010,
     "DATABASE": {
-        "HOST": "localhost",
-        "USER": "admin",
-        "PASSWORD": "admin",
-        "DATABASE": "crm"
+        "HOST": "s177.cyber-folks.pl",
+        "USER": "ckralaqami_crmreact",
+        "PASSWORD": "aQ1SIF1KU)-m-1dw",
+        "DATABASE": "ckralaqami_crmreact"
     },
     "login_key_secret": "Ir1nDSRxGt9EHJZbN0AhJGCAI7kBxE7q"
 }
