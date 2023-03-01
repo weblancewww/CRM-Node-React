@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "assets/css/App.css";
-import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
+import { HashRouter, Route, Switch, Redirect } from "react-router-dom";
 import AuthLayout from "layouts/auth";
 import AdminLayout from "layouts/admin";
 import { ChakraProvider } from "@chakra-ui/react";
@@ -24,7 +24,7 @@ fetch("/api/auth/session", {
   ReactDOM.render(
     <ChakraProvider theme={theme}>
         <ThemeEditorProvider>
-          <BrowserRouter>
+        <HashRouter>
           {logged?
           <Switch>
               <Route path={`/admin`} component={AdminLayout}  />
@@ -38,7 +38,7 @@ fetch("/api/auth/session", {
               <Redirect from='/' to='/auth/sign-in'  />
               <Redirect from='*' to='/auth/sign-in'  />
             </Switch>}
-          </BrowserRouter>
+            </HashRouter>
         </ThemeEditorProvider>
       
     </ChakraProvider>,
