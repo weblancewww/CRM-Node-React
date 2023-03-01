@@ -1,5 +1,5 @@
 {
-    "PORT": 35010,
+    "PORT": 36000,
     "DATABASE": {
         "HOST": "s177.cyber-folks.pl",
         "USER": "ckralaqami_crmreact",
