@@ -51,6 +51,7 @@ export default function Banner(props) {
     })
       .then((response) => response.blob())
       .then((blob) => {
+        console.log(blob)
         setImageUrl(URL.createObjectURL(blob));
       })
       .catch((error) => {

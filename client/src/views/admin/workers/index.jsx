@@ -23,9 +23,11 @@
 // Chakra imports
 import { Box, Grid, SimpleGrid } from "@chakra-ui/react";
 import Banner from "views/admin/workers/components/Banner";
+import BannerAdd from "views/admin/workers/components/BannerAdd";
 // Custom components
-import banner from "assets/img/auth/banner.png";
+import banner from "assets/img/auth/bannerwb.png";
 import ComplexTable from "views/admin/workers/components/complexData";
+import DeleteUser from "views/admin/workers/components/DeleteUser";
 
 
 import {
@@ -48,7 +50,7 @@ import { useDisclosure } from "@chakra-ui/react"
 
 import React from "react";
 
-async function saveData(id,setMessage){
+async function saveData(id,setMessage,refresh,current,onClose){
   console.log(id)
   var user_name = document.getElementById("first-name").value;
   var user_lastname = document.getElementById("last-name").value;
@@ -74,7 +76,46 @@ async function saveData(id,setMessage){
     }).then((res) => res.json())
       .then((data) => {
         setMessage(data.message)
+        refresh(1,current)
+        onClose()
         console.log("UPDATED")
+    }); 
+}
+
+
+async function addData(setOpenAdd,refresh,current){
+  var user_name = document.getElementById("first-name-add").value;
+  var user_lastname = document.getElementById("last-name-add").value;
+  var email = document.getElementById("email-add").value;
+  var perms = document.getElementById("position-add").value;
+  var password = document.getElementById("password-add").value;
+
+  console.log({
+    first_name:user_name,
+    last_name: user_lastname,
+    email:email,
+    positions: perms,
+    password: password
+  })
+  await fetch("/api/WorkersList/add", {
+    method: "POST",
+    headers: {
+      "Content-type": "application/json"
+    },
+    body: JSON.stringify({
+        data: {
+          first_name:user_name,
+          last_name: user_lastname,
+          email:email,
+          positions: perms,
+          password: password
+        }
+      })
+    }).then((res) => res.json())
+      .then((data) => {
+        setOpenAdd(false)
+        refresh(1,current)
+        console.log("ADDED")
     }); 
 }
 
@@ -82,6 +123,9 @@ export default function Workers() {
 
   const { isOpen, onOpen, onClose } = useDisclosure()
   const btnRef = React.useRef()
+  const addRef = React.useRef()
+  const [current, setCurrent] = React.useState(10)
+  const [message, setMessage] = React.useState(null)
 
   const columnsWorkers = [
     {
@@ -106,7 +150,7 @@ export default function Workers() {
     },
     {
         Header: "Rola",
-        accessor: "roles",
+        accessor: "role_name",
       },
       {
         Header: "Akcje",
@@ -116,6 +160,7 @@ export default function Workers() {
 
 
     const [users, setData] = React.useState(null);
+    const [isOpen2, onOpen2] = React.useState(false)
     const GetWorkers = async (pg,limit) => {
         console.log(pg)
         await fetch("/api/WorkersList", {
@@ -135,11 +180,12 @@ export default function Workers() {
 
     }
     React.useEffect( async () => {
-    await GetWorkers(1,10)
+    await GetWorkers(1,current)
     }, []);
 
     
     const [user, setUser] = React.useState(null);
+    const [openAdd, setOpenAdd] = React.useState(false);
 
     const handleOpen = async (id) => {
       try {
@@ -191,10 +237,12 @@ export default function Workers() {
           pages={users.pages}
           onOpen={handleOpen}
           refresh={GetWorkers}
+          setOpenAdd={setOpenAdd}
+          current={current}
+          setCurrent={setCurrent}
         />
         :""}
-      </SimpleGrid>
-      
+      </SimpleGrid>      
       <Drawer
         isOpen={isOpen}
         placement="right"
@@ -214,10 +262,43 @@ export default function Workers() {
             />
           </DrawerBody>
           <DrawerFooter>
+          <DeleteUser
+            isOpen={isOpen2}
+            onOpen={onOpen2}
+            user={user}
+            onClose={onClose}
+            refresh={GetWorkers}
+            current={current}
+          />
             <Button variant="outline" mr={3} onClick={onClose}>
               Zamknij
             </Button>
-            <Button colorScheme="brand" onClick={() => {saveData(user)}}>Zapisz</Button>
+            <Button colorScheme="brand" onClick={() => {saveData(user,setMessage,GetWorkers,current,onClose)}}>Zapisz</Button>
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
+      <Drawer
+        isOpen={openAdd}
+        placement="right"
+        onClose={() => setOpenAdd(false)}
+        size={"xl"}
+      >
+        <DrawerOverlay />
+        <DrawerContent>
+          <DrawerCloseButton />
+          <DrawerHeader>Dodaj pracownika</DrawerHeader>
+          <DrawerBody>
+          <BannerAdd
+              gridArea='1 / 1 / 2 / 2'
+              banner={banner}
+            />
+          </DrawerBody>
+          <DrawerFooter>
+            
+            <Button variant="outline" mr={3} onClick={() => setOpenAdd(false)}>
+              Zamknij
+            </Button>
+            <Button colorScheme="brand" onClick={() => addData(setOpenAdd,GetWorkers,current)}>Zapisz</Button>
           </DrawerFooter>
         </DrawerContent>
       </Drawer>

@@ -53,6 +53,7 @@ const routes = [
     name: "Profil",
     layout: "/admin",
     path: "/profile",
+    role: "0",
     icon: <Icon as={MdPerson} width='20px' height='20px' color='inherit' />,
     component: Profile,
   },
@@ -68,6 +69,7 @@ const routes = [
     name: "Pracownicy",
     layout: "/admin",
     path: "/workers",
+    role:"10",
     icon: <Icon as={MdLock} width='20px' height='20px' color='inherit' />,
     component: Workers,
     // notVisible: true

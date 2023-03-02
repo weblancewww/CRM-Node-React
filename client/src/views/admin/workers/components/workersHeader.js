@@ -17,7 +17,7 @@ export const columnsWorkers = [
     },
     {
         Header: "Rola",
-        accessor: "roles",
+        accessor: "role_name",
       },
       {
         Header: "Akcje",
