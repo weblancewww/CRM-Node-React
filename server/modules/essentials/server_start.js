@@ -2,6 +2,20 @@ const config = require("../../config/config.json");
 const express = require("express");
 const path = require('path');
 const app = express();
+const http = require('http');
+const socketIo = require('socket.io');
+const server = http.createServer(app);
+const io = socketIo(server, {
+  cors: {
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST"],
+    credentials: true
+  }
+});
+const cors = require('cors');
+
+
+
 
 
 app.use(express.json({ extended: true }));       // to support JSON-encoded bodies
@@ -20,9 +34,8 @@ app.get('/', (req, res) => {
 const PORT = process.env.PORT || config.PORT;
 
 function start_server(){
-    app.listen(config.PORT, () => {
+    server.listen(config.PORT, () => {
         console.log(`Serwer uruchomiony na porcie ${PORT}. Miłej zabawy :)`);
     });
-
 }
-module.exports = {start_server, app};
+module.exports = {start_server, app,io};
