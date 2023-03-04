@@ -1,14 +1,18 @@
 const config = require("../../config/config.json");
 const app = require("./server_start").app;
+const io = require("./server_start").io;
 const mysql = require("./mysql");
 var db =  new mysql();
 const bcrypt = require("bcrypt")
 const session = require("express-session")
 const cookieParser = require("cookie-parser")
+const http = require('http');
 const rand = require("random-key")
 const fs = require('fs')
 const multer = require('multer');
 const upload = multer({ dest: 'assets/uimgs/' });
+const path = require("path")
+
 
 /*bcrypt.genSalt(10, (err, salt) => {
     bcrypt.hash("admin", salt, function(err, hash) {
@@ -92,6 +96,20 @@ function parseCookies (request) {
 }
 
 function endpoints(){
+
+
+    io.on('connection', (socket) => {
+        console.log('A user connected to Socket.IO server');
+      
+        // listen for events from the client
+        socket.on('myEvent', (data) => {
+          console.log('Received data from client:', data);
+        });
+      
+        // emit events to the client
+        socket.emit('myEvent', { data: 'hello from server' });
+      });
+
     app.use(cookieParser())
 
     app.post("/api", (req, res) => {
@@ -101,7 +119,6 @@ function endpoints(){
     app.post("/api/auth/session", (req, res) =>{
         if(session[parseCookies(req)["user_"+config.login_key_secret+"_loggin"]]){
             db.custom(`SELECT * FROM users WHERE user_id = ${session[parseCookies(req)["user_"+config.login_key_secret+"_loggin"]].user_id}`, function(perms){
-                console.log('server/../uploads/images/' + perms[0].photo)
                 res.json({session: true,user:{perms: perms[0].positions, user_name: perms[0].first_name,photo: perms[0].photo}})
             })
             
@@ -110,6 +127,7 @@ function endpoints(){
             res.json({session: false})
         }
     })
+    
 
 
     const login_page = "/login";
@@ -164,19 +182,24 @@ function endpoints(){
 
     app.post("/data/images/:filename", (req, res) =>{
         const fileName = req.params.filename;
-        res.sendFile(fileName, { root:'server/../uploads/images' }, (err) => {
+        const imagePath = path.join(__dirname, '..','..', 'uploads', 'images', fileName);
+        console.log(imagePath)
+        res.sendFile(imagePath, (err) => {
             if (err) {
-              res.json({})
+            res.json({})
             }
         });
     })
+
+
+
     app.post('/api/data/users/avatar_new', upload.single('avatar'), (req, res) => {
         const file = req.file; // file passed from client
         r = (Math.random() + 1).toString(36).substring(2);
-        fs.rename(file.path, `server/../uploads/images/${r}_${file.originalname}`, function (err) {
+        fs.rename(file.path, path.join(__dirname, '..','..', 'uploads', 'images', r+"_"+file.originalname), function (err) {
             db.update({photo:r+"_"+file.originalname},"users","user_id",req.body.user_id, ()=>{})
             if (err) throw err;
-            res.sendFile(r+"_"+file.originalname, { root:'server/../uploads/images' }, (err) => {
+            res.sendFile(path.join(__dirname, '..','..', 'uploads', 'images', r+"_"+file.originalname), (err) => {
                 if (err) {
                   res.json({})
                 }

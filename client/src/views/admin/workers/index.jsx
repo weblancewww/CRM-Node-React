@@ -42,6 +42,9 @@ import {
 } from "@chakra-ui/react"
 
 import { useDisclosure } from "@chakra-ui/react"
+import io from 'socket.io-client';
+
+
 
 
 
@@ -126,7 +129,7 @@ export default function Workers() {
   const addRef = React.useRef()
   const [current, setCurrent] = React.useState(10)
   const [message, setMessage] = React.useState(null)
-
+  const socket = io('http://localhost:36000');
   const columnsWorkers = [
     {
       Header: "user_id",
@@ -161,6 +164,15 @@ export default function Workers() {
 
     const [users, setData] = React.useState(null);
     const [isOpen2, onOpen2] = React.useState(false)
+
+    socket.on('connect', () => {
+      console.log('Connected to Socket.IO server');
+    });
+    
+    // emit events to the server
+    socket.emit('myEvent', { data: 'hello world' });
+  
+
     const GetWorkers = async (pg,limit) => {
         console.log(pg)
         await fetch("/api/WorkersList", {
