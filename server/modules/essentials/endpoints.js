@@ -119,21 +119,19 @@ var updateData = {
 function endpoints(){
 
     io.on('connection', (socket) => {
-        console.log('A client has connected');
+        console.log('New client connected');
       
-        // Emit an initial data payload to the client
-        socket.emit('initialData', { someData });
-        
-        // Listen for events from the client
-        socket.on('someEvent', (data) => {
-          console.log(`Received data from client: ${data}`);
-          // Do something with the data, e.g. update a database or emit updated data to other clients
-          io.emit('updateData', { updatedData });
+        // Handle socket events
+        socket.on('alerts', (msg) => {
+          console.log('message: ' + msg);
+          io.emit('alerts', updateData);
         });
-        
-        // Disconnect handler
+
+        io.emit('alerts', someData);
+      
+        // Handle disconnection
         socket.on('disconnect', () => {
-          console.log('A client has disconnected');
+          console.log('Client disconnected');
         });
       });
 
@@ -356,6 +354,16 @@ function endpoints(){
            res.json(data)
         })
        });
+
+       app.post("/api/notifyList", (req, res) => {
+        db.custom(`SELECT * FROM notify LIMIT ${req.body.limit} OFFSET ${parseInt(req.body.page - 1)*parseInt(req.body.limit)}`,function(result){
+           db.custom(`SELECT COUNT(*)/${req.body.limit} as pages FROM notify`,function(pages){
+            res.json({data: result,pages:Math.ceil(pages[0].pages)})
+         })
+        })
+       });
+
+       
 
        app.post("/api/WorkersList/delete", (req, res) => {
         db.workersDelete(req.body.id,function(data){ 

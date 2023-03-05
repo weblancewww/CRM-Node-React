@@ -103,12 +103,47 @@ export default function HeaderLinks(props) {
 
   const [alerts, setAlerts] = React.useState(null);
 
+  React.useEffect(() => {
+    // Connect to the Socket.io server
+    const socket = io();
+
+    // Listen for initial data payload from server
+    socket.on('alerts', (data) => {
+      setAlerts(data);
+      console.log(data)
+    });
+    // Disconnect socket when component unmounts
+    return () => {
+      socket.disconnect();
+    }
+  }, []);
+
+  const sender = () => {
+    const socket = io();
+
+    // Listen for initial data payload from server
+    socket.emit('alerts', {
+      alerts: [
+          {
+              message: "Helo, World",
+              role: 10,
+              type: "success",
+              text: "O tam na dol"
+          }
+      ]
+  });
+    // Disconnect socket when component unmounts
+    return () => {
+      socket.disconnect();
+    }
+  }
+
   const components = [];
   if(alerts){
   for (let i = 0; i < alerts.alerts.length; i++) {
     var alert = alerts.alerts[i]
     components.push(
-      <Alert status={alert.type} mb="2">
+      <Alert status={alert.type} mb="2" borderRadius="10px">
         <AlertIcon />
         <Box>
         <AlertTitle>{alert.message}</AlertTitle>
@@ -157,6 +192,7 @@ export default function HeaderLinks(props) {
           />
           </Box>
       <Drawer
+        size="md"
         isOpen={isOpen}
         placement='right'
         onClose={onClose}
@@ -165,7 +201,7 @@ export default function HeaderLinks(props) {
         <DrawerOverlay />
         <DrawerContent>
           <DrawerCloseButton />
-          <DrawerHeader>Powiadomienia</DrawerHeader>
+          <DrawerHeader onClick={() => sender()}>Powiadomienia</DrawerHeader>
 
           <DrawerBody
           sx={{

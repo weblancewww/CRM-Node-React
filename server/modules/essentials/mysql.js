@@ -52,6 +52,22 @@ module.exports = class MySQL {
     function (err, result) {
       if (err) throw err;
     });
+    this.con.query(`
+      CREATE TABLE IF NOT EXISTS notify (
+        notify_id int NOT NULL AUTO_INCREMENT,
+        notify_name TEXT NOT NULL,
+        notify_title TEXT NOT NULL,
+        notify_text TEXT NOT NULL,
+        notify_date_from VARCHAR(255) NOT NULL,
+        notify_date_to VARCHAR(255) NOT NULL,
+        notify_action_url TEXT NOT NULL,
+        notify_roles INT(100) NOT NULL,
+        notify_users INT(100) NOT NULL,
+        PRIMARY KEY (notify_id)
+    );`, 
+    function (err, result) {
+      if (err) throw err;
+    });
    }
 
    verifyUser(data, callback){
