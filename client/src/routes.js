@@ -18,6 +18,7 @@ import DataTables from "views/admin/dataTables";
 // Auth Imports
 import SignInCentered from "views/auth/signIn";
 import Workers from "views/admin/workers";
+import Notify from "views/admin/notify";
 
 const routes = [
   {
@@ -72,6 +73,15 @@ const routes = [
     role:"10",
     icon: <Icon as={MdLock} width='20px' height='20px' color='inherit' />,
     component: Workers,
+    // notVisible: true
+  },
+  {
+    name: "Powiadomienia",
+    layout: "/admin",
+    path: "/notify",
+    role:"10",
+    icon: <Icon as={MdLock} width='20px' height='20px' color='inherit' />,
+    component: Notify,
     // notVisible: true
   },
 

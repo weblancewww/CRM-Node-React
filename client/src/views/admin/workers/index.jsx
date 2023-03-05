@@ -38,12 +38,12 @@ import {
   DrawerOverlay,
   DrawerContent,
   DrawerCloseButton,
-  Button
+  Button,
+  useColorMode,
+  useColorModeValue
 } from "@chakra-ui/react"
 
 import { useDisclosure } from "@chakra-ui/react"
-import io from 'socket.io-client';
-
 
 
 
@@ -129,7 +129,7 @@ export default function Workers() {
   const addRef = React.useRef()
   const [current, setCurrent] = React.useState(10)
   const [message, setMessage] = React.useState(null)
-  const socket = io('http://localhost:36000');
+
   const columnsWorkers = [
     {
       Header: "user_id",
@@ -165,12 +165,7 @@ export default function Workers() {
     const [users, setData] = React.useState(null);
     const [isOpen2, onOpen2] = React.useState(false)
 
-    socket.on('connect', () => {
-      console.log('Connected to Socket.IO server');
-    });
-    
-    // emit events to the server
-    socket.emit('myEvent', { data: 'hello world' });
+  
   
 
     const GetWorkers = async (pg,limit) => {
@@ -218,6 +213,9 @@ export default function Workers() {
       }
     };
 
+    const { colorMode } = useColorMode();
+  const bgColor = useColorModeValue("white", "navy.800");
+
 
   return (
     <Box pt={{ base: "130px", md: "80px", xl: "80px" }}>
@@ -261,9 +259,10 @@ export default function Workers() {
         onClose={onClose}
         finalFocusRef={btnRef}
         size={"xl"}
+        
       >
         <DrawerOverlay />
-        <DrawerContent>
+        <DrawerContent bg={bgColor}>
           <DrawerCloseButton />
           <DrawerHeader>Edytuj profil pracownika</DrawerHeader>
           <DrawerBody>
