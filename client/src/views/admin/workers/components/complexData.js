@@ -11,6 +11,7 @@ import {
     Button,
     Tr,
     useColorModeValue,
+    useColorMode
   } from "@chakra-ui/react";
   import React, { useMemo, forwardRef } from "react";
   import {
@@ -113,6 +114,8 @@ import {
       initialState,
     } = tableInstance;
     initialState.pageSize = 5;
+    const { colorMode, toggleColorMode } = useColorMode();
+    const bgColor = useColorModeValue("white", "red");
 
   
     const textColor = useColorModeValue("secondaryGray.900", "white");
@@ -127,7 +130,7 @@ import {
       <WrapItem style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
         <Box minW="200px" >
         <Text minW='200px'
-            color={textColor}
+            
             fontSize='22px'
             fontWeight='700'
             lineHeight='100%'>
@@ -188,7 +191,7 @@ import {
             {page.map((row, index) => {
               prepareRow(row);
               return (
-                <Tr onClick={() => onOpen(row.cells[0].value)} {...row.getRowProps()} key={index}>
+                <Tr  _hover={{ bg: colorMode === "light" ? "gray.200" : "navy.400" }} cursor="pointer" onClick={() => onOpen(row.cells[0].value)} {...row.getRowProps()} key={index}>
                   {row.cells.map((cell, index) => {
                     let data = "";
                     if (cell.column.Header === "photo") {

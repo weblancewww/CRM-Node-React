@@ -94,21 +94,49 @@ function parseCookies (request) {
 
     return list;
 }
+var someData = {
+    alerts: [
+        {
+            message: "Uwazaj, drabina!",
+            role: 10,
+            type: "success",
+            text: "O tam na dol"
+        }
+    ]
+}
+
+var updateData = {
+    alerts: [
+        {
+            message: "Helo, World",
+            role: 10,
+            type: "success",
+            text: "O tam na dol"
+        }
+    ]
+}
 
 function endpoints(){
 
-
     io.on('connection', (socket) => {
-        console.log('A user connected to Socket.IO server');
+        console.log('A client has connected');
       
-        // listen for events from the client
-        socket.on('myEvent', (data) => {
-          console.log('Received data from client:', data);
+        // Emit an initial data payload to the client
+        socket.emit('initialData', { someData });
+        
+        // Listen for events from the client
+        socket.on('someEvent', (data) => {
+          console.log(`Received data from client: ${data}`);
+          // Do something with the data, e.g. update a database or emit updated data to other clients
+          io.emit('updateData', { updatedData });
         });
-      
-        // emit events to the client
-        socket.emit('myEvent', { data: 'hello from server' });
+        
+        // Disconnect handler
+        socket.on('disconnect', () => {
+          console.log('A client has disconnected');
+        });
       });
+
 
     app.use(cookieParser())
 
