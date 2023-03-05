@@ -42,6 +42,7 @@ import routes from "routes.js";
 import { ThemeEditor } from "./ThemeEditor";
 import { NavLink } from "react-router-dom";
 import io from "socket.io-client";
+import { Badge } from "@chakra-ui/react"
 export default function HeaderLinks(props) {
   const { secondary } = props;
   // Chakra Color Mode
@@ -179,17 +180,19 @@ export default function HeaderLinks(props) {
       flexDirection='row'
       flexWrap={secondary ? { base: "wrap", md: "nowrap" } : "unset"}
       >
-        <Box cursor="pointer">
+        <Box cursor="pointer" mr={2}>
+        <Flex justify="center">
       <Icon
             ref={btnRef}
             onClick={onOpen}
-            mt='6px'
+            mt='3px'
             as={MdNotificationsNone}
             color={navbarIcon}
             w='18px'
             h='18px'
-            me='10px'
           />
+            <Box height="10px">123</Box>
+            </Flex>
           </Box>
       <Drawer
         size="md"
