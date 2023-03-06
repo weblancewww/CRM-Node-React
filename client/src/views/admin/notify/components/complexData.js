@@ -11,8 +11,12 @@ import {
     Button,
     Tr,
     useColorModeValue,
-    useColorMode
+    useColorMode,
+    SimpleGrid,
   } from "@chakra-ui/react";
+
+  import SelectMulti from "react-select";
+
   import React, { useMemo, forwardRef } from "react";
   import {
     useGlobalFilter,
@@ -34,10 +38,20 @@ import {
     MenuDivider,
     Stack,
     Spinner,
-    Select,
     Wrap,
+    Select,
     WrapItem,
-    Box
+    Box,
+    Modal,
+    ModalHeader,
+    ModalBody,
+    ModalCloseButton,
+    ModalFooter,
+    ModalOverlay,
+    ModalContent,
+    Input,
+    FormControl,
+    FormLabel
   } from "@chakra-ui/react"
 
   import {  ChevronDownIcon } from '@chakra-ui/icons'
@@ -81,7 +95,7 @@ import {
   // Assets
 
   export default function ColumnsTable(props) {
-    const { columnsData, tableData, ref,onOpen, refresh,pages, setOpenAdd, current, setCurrent } = props;
+    const { columnsData, tableData, ref, refresh,pages, setOpenAdd, current, setCurrent } = props;
     console.log(tableData)
     const columns = useMemo(() => columnsData, [columnsData]);
     const data = useMemo(() => tableData, [tableData]);
@@ -115,11 +129,67 @@ import {
     } = tableInstance;
     initialState.pageSize = 5;
     const { colorMode, toggleColorMode } = useColorMode();
-    const bgColor = useColorModeValue("white", "red");
 
   
     const textColor = useColorModeValue("secondaryGray.900", "white");
     const borderColor = useColorModeValue("gray.200", "whiteAlpha.100");
+
+    const options = [
+      { value: "apple", label: "Apple" },
+      { value: "banana", label: "Banana" },
+      { value: "orange", label: "Orange" },
+    ];
+
+    const customStyles = {
+      control: (provided) => ({
+        ...provided,
+        backgroundColor: colorMode === "light" ? "gray.100" : "gray.700",
+        borderRadius: "16px",
+      border: `1px solid gray.100`,
+  
+        boxShadow: "none",
+      }),
+      option: (provided, state) => ({
+        ...provided,
+        backgroundColor: state.isSelected
+          ? colorMode === "light"
+            ? "blue.100"
+            : "blue.700"
+          : "transparent",
+        color: state.isSelected ? "white" : "inherit",
+        ":hover": {
+          backgroundColor: state.isSelected
+            ? colorMode === "light"
+              ? "blue.100"
+              : "blue.700"
+            : colorMode === "light"
+            ? "gray.200"
+            : "gray.600",
+        },
+      }),
+      multiValue: (provided) => ({
+        ...provided,
+        backgroundColor: colorMode === "light" ? "blue.100" : "blue.700",
+      }),
+      multiValueLabel: (provided) => ({
+        ...provided,
+        color: "white",
+      }),
+      multiValueRemove: (provided) => ({
+        ...provided,
+        color: "white",
+        ":hover": {
+          backgroundColor: "transparent",
+          color: "inherit",
+        },
+      }),
+    };
+
+    const handleChange = (selectedOptions) => {
+      console.log(selectedOptions); // Log the selected options to the console
+    };
+
+    const [isOpen, setOpen] = React.useState(false);
     return (
       <Card
         direction='column'
@@ -156,7 +226,7 @@ import {
               Akcje
             </MenuButton>
             <MenuList>
-              <MenuItem onClick={() => setOpenAdd(true)}>Dodaj powiadomienie</MenuItem>
+              <MenuItem onClick={() => setOpen(true)}>Dodaj powiadomienie</MenuItem>
             </MenuList>
           </Menu>
         </Box>
@@ -189,7 +259,7 @@ import {
             {page.map((row, index) => {
               prepareRow(row);
               return (
-                <Tr  _hover={{ bg: colorMode === "light" ? "gray.200" : "navy.400" }} cursor="pointer" onClick={() => onOpen(row.cells[0].value)} {...row.getRowProps()} key={index}>
+                <Tr  _hover={{ bg: colorMode === "light" ? "gray.200" : "navy.400" }} cursor="pointer" {...row.getRowProps()} key={index}>
                   {row.cells.map((cell, index) => {
                     let data = "";
                     if (cell.column.Header === "photo") {
@@ -207,7 +277,7 @@ import {
                       }
                       if (cell.column.id === "actions") {
                         data = (
-                            <Button  colorScheme="brand" onClick={() => onOpen(row.cells[0].value)}>
+                            <Button  colorScheme="brand" >
                             Opcje
                           </Button>
                         )
@@ -230,6 +300,76 @@ import {
           </Tbody>
         </Table>
         {Pagination(pages,refresh,setCurrent, current,selectedOption)}
+
+
+      <Modal isOpen={isOpen} onClose={() => setOpen(false)} size="lg">
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Dodaj powiadomienie</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Box>
+              <FormControl id="first-name" isRequired mb={3}>
+                <FormLabel>Tytuł</FormLabel>
+                <Input placeholder="Imię pracownika" defaultValue={data.first_name} borderRadius="16px" />
+              </FormControl>
+              <FormControl id="first-name" isRequired mb={3}>
+                <FormLabel>Wiadomość</FormLabel>
+                <Input placeholder="Imię pracownika" defaultValue={data.first_name} borderRadius="16px" />
+              </FormControl>
+              <SimpleGrid columns={{sm: 1, md: 2, lg: 2}} gap="5">
+                <FormControl id="first-name" isRequired mb={3}>
+                  <FormLabel>Rozpoczęcie</FormLabel>
+                  <Input
+                  placeholder="Select Date and Time"
+                  size="md"
+                  type="datetime-local"
+                  borderRadius="16px"
+                  />
+                </FormControl>
+                <FormControl id="first-name" isRequired mb={3}>
+                  <FormLabel>Zakończenie</FormLabel>
+                  <Input
+                  placeholder="Select Date and Time"
+                  size="md"
+                  type="datetime-local"
+                  borderRadius="16px"
+                  />
+                </FormControl>
+             
+              </SimpleGrid>
+              <SimpleGrid columns={{sm: 1, md: 2, lg: 2}} gap="5">
+                <FormControl id="first-name" isRequired mb={3}>
+                  <FormLabel>Rozpoczęcie</FormLabel>
+                  <SelectMulti
+                  bg={colorMode === "light" ? "green" : "blue"}
+      options={options}
+      isMulti
+      onChange={handleChange}
+      styles={customStyles}
+    />
+                </FormControl>
+                <FormControl id="first-name" isRequired mb={3}>
+                  <FormLabel>Zakończenie</FormLabel>
+                  <Input
+                  placeholder="Select Date and Time"
+                  size="md"
+                  type="datetime-local"
+                  borderRadius="16px"
+                  />
+                </FormControl>
+             
+              </SimpleGrid>
+            </Box>
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="brand" mr={3} onClick={() => setOpen(false)}>
+              Anuluj
+            </Button>
+            <Button variant="ghost">Dodaj</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
       </Card>
     );
   }

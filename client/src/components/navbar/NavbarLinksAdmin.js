@@ -180,11 +180,13 @@ export default function HeaderLinks(props) {
       flexDirection='row'
       flexWrap={secondary ? { base: "wrap", md: "nowrap" } : "unset"}
       >
-        <Box cursor="pointer" mr={2}>
-        <Flex justify="center">
+        <Box cursor="pointer" mr={3}
+         ref={btnRef}
+         onClick={onOpen}
+         >
+        <Flex justify="center" >
       <Icon
-            ref={btnRef}
-            onClick={onOpen}
+         
             mt='3px'
             as={MdNotificationsNone}
             color={navbarIcon}
