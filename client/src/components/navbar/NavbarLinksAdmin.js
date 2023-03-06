@@ -111,6 +111,7 @@ export default function HeaderLinks(props) {
     // Listen for initial data payload from server
     socket.on('alerts', (data) => {
       setAlerts(data);
+      setCounts(data.alerts.length)
       console.log(data)
     });
     // Disconnect socket when component unmounts
@@ -138,6 +139,7 @@ export default function HeaderLinks(props) {
       socket.disconnect();
     }
   }
+  const [counts, setCounts] = React.useState(0)
 
   const components = [];
   if(alerts){
@@ -191,7 +193,7 @@ export default function HeaderLinks(props) {
             w='18px'
             h='18px'
           />
-            <Box height="10px">123</Box>
+            <Box height="10px">{counts}</Box>
             </Flex>
           </Box>
       <Drawer
