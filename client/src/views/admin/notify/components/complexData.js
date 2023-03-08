@@ -13,9 +13,10 @@ import {
     useColorModeValue,
     useColorMode,
     SimpleGrid,
+    
   } from "@chakra-ui/react";
 
-  import SelectMulti from "react-select";
+  import MultiSelect from "react-select";
 
   import React, { useMemo, forwardRef } from "react";
   import {
@@ -92,6 +93,9 @@ import {
     );
   }
   
+  function addNotify() {
+    
+  }
   // Assets
 
   export default function ColumnsTable(props) {
@@ -138,16 +142,30 @@ import {
       { value: "apple", label: "Apple" },
       { value: "banana", label: "Banana" },
       { value: "orange", label: "Orange" },
+      { value: "apple2", label: "Apple2" },
+      { value: "banana2", label: "Banana2" },
+      { value: "orange2", label: "Orange2" },
     ];
 
+    const [selectedOptions, setSelectedOptions] = React.useState([]);
+
     const customStyles = {
-      control: (provided) => ({
+      control: (provided, state) => ({
         ...provided,
         backgroundColor: colorMode === "light" ? "gray.100" : "gray.700",
-        borderRadius: "16px",
-      border: `1px solid gray.100`,
-  
-        boxShadow: "none",
+        borderColor: state.isFocused
+          ? colorMode === "light"
+            ? "blue.400"
+            : "blue.200"
+          : "gray.200",
+        boxShadow: state.isFocused ? "0 0 0 1px #cbd5e0" : "none",
+        "&:hover": {
+          borderColor: state.isFocused
+            ? colorMode === "light"
+              ? "blue.400"
+              : "blue.200"
+            : "gray.200",
+        },
       }),
       option: (provided, state) => ({
         ...provided,
@@ -155,33 +173,18 @@ import {
           ? colorMode === "light"
             ? "blue.100"
             : "blue.700"
+          : state.isFocused
+          ? colorMode === "light"
+            ? "gray.200"
+            : "gray.600"
           : "transparent",
         color: state.isSelected ? "white" : "inherit",
-        ":hover": {
-          backgroundColor: state.isSelected
-            ? colorMode === "light"
-              ? "blue.100"
-              : "blue.700"
-            : colorMode === "light"
-            ? "gray.200"
-            : "gray.600",
-        },
       }),
-      multiValue: (provided) => ({
+      multiValue: (provided, state) => ({
         ...provided,
-        backgroundColor: colorMode === "light" ? "blue.100" : "blue.700",
-      }),
-      multiValueLabel: (provided) => ({
-        ...provided,
-        color: "white",
-      }),
-      multiValueRemove: (provided) => ({
-        ...provided,
-        color: "white",
-        ":hover": {
-          backgroundColor: "transparent",
-          color: "inherit",
-        },
+        backgroundColor: colorMode === "light" ? "gray.300" : "gray.600",
+        borderRadius: "999px",
+        color: "gray.800",
       }),
     };
 
@@ -309,16 +312,16 @@ import {
           <ModalCloseButton />
           <ModalBody>
             <Box>
-              <FormControl id="first-name" isRequired mb={3}>
+              <FormControl id="title" isRequired mb={3}>
                 <FormLabel>Tytuł</FormLabel>
-                <Input placeholder="Imię pracownika" defaultValue={data.first_name} borderRadius="16px" />
+                <Input placeholder="Tytuł powiadomienia" defaultValue={data.first_name} borderRadius="16px" />
               </FormControl>
-              <FormControl id="first-name" isRequired mb={3}>
+              <FormControl id="mess" isRequired mb={3}>
                 <FormLabel>Wiadomość</FormLabel>
-                <Input placeholder="Imię pracownika" defaultValue={data.first_name} borderRadius="16px" />
+                <Input placeholder="wiadomość powiadomienia" defaultValue={data.first_name} borderRadius="16px" />
               </FormControl>
               <SimpleGrid columns={{sm: 1, md: 2, lg: 2}} gap="5">
-                <FormControl id="first-name" isRequired mb={3}>
+                <FormControl id="date-from" isRequired mb={3}>
                   <FormLabel>Rozpoczęcie</FormLabel>
                   <Input
                   placeholder="Select Date and Time"
@@ -327,7 +330,7 @@ import {
                   borderRadius="16px"
                   />
                 </FormControl>
-                <FormControl id="first-name" isRequired mb={3}>
+                <FormControl id="date-to" isRequired mb={3}>
                   <FormLabel>Zakończenie</FormLabel>
                   <Input
                   placeholder="Select Date and Time"
@@ -338,35 +341,14 @@ import {
                 </FormControl>
              
               </SimpleGrid>
-              <SimpleGrid columns={{sm: 1, md: 2, lg: 2}} gap="5">
-                <FormControl id="first-name" isRequired mb={3}>
-                  <FormLabel>Rozpoczęcie</FormLabel>
-                  <SelectMulti
-                  bg={colorMode === "light" ? "green" : "blue"}
-      options={options}
-      isMulti
-      onChange={handleChange}
-      styles={customStyles}
-    />
-                </FormControl>
-                <FormControl id="first-name" isRequired mb={3}>
-                  <FormLabel>Zakończenie</FormLabel>
-                  <Input
-                  placeholder="Select Date and Time"
-                  size="md"
-                  type="datetime-local"
-                  borderRadius="16px"
-                  />
-                </FormControl>
-             
-              </SimpleGrid>
+    
             </Box>
           </ModalBody>
           <ModalFooter>
-            <Button colorScheme="brand" mr={3} onClick={() => setOpen(false)}>
+            <Button variant="ghost"  mr={3} onClick={() => setOpen(false)}>
               Anuluj
             </Button>
-            <Button variant="ghost">Dodaj</Button>
+            <Button colorScheme="brand" onClick={() => addNotify()}>Dodaj</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

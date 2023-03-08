@@ -6,3 +6,10 @@ body {
 option {
   color: black;
 }
+
+.light-class #react-select-2-listbox {
+  background-color: white;
+}
+.dark-class #react-select-2-listbox {
+  background-color: var(--chakra-colors-gray-700)
+}
