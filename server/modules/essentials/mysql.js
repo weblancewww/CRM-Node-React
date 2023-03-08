@@ -58,6 +58,7 @@ module.exports = class MySQL {
         notify_name TEXT NOT NULL,
         notify_title TEXT NOT NULL,
         notify_text TEXT NOT NULL,
+        notify_type VARCHAR(255) NOT NULL,
         notify_date_from VARCHAR(255) NOT NULL,
         notify_date_to VARCHAR(255) NOT NULL,
         notify_action_url TEXT NOT NULL,
@@ -103,6 +104,7 @@ module.exports = class MySQL {
   }
 
   custom(sql, callback){
+    console.log(sql)
     this.con.query(sql, 
     function (err, result) {
       if (err) throw err;
@@ -165,6 +167,30 @@ module.exports = class MySQL {
       if (err) throw err;
       return callback(result)
     });
+  }
+
+  insert(sql, db, callback){
+
+    this.rows = "";
+    this.values = "";
+    this.i = 1;
+    for (var key in sql) {
+      if (sql.hasOwnProperty(key)) {
+        if(this.i < Object.keys(sql).length) {
+          this.rows += key+", ";
+          this.values += "'"+sql[key]+"', ";
+        } else {
+          this.rows += key+" ";
+          this.values += "'"+sql[key]+"' ";
+        }
+      }
+      this.i++;
+  }
+  this.con.query("INSERT INTO `"+db+"` ("+this.rows+") VALUES("+this.values+")", function (err, result) {
+    if (err) throw err;
+    return callback(result.insertId);
+    
+  });
   }
 
 }

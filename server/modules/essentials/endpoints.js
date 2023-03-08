@@ -120,14 +120,22 @@ function endpoints(){
 
     io.on('connection', (socket) => {
         console.log('New client connected');
-      
+        const now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        const formattedDate = now.toISOString().slice(0, 16);
         // Handle socket events
-        socket.on('alerts', (msg) => {
+        socket.on('update_notify', (msg) => {
           console.log('message: ' + msg);
-          io.emit('alerts', updateData);
+          db.custom(`SELECT * FROM notify WHERE notify_date_from <= '${formattedDate}' AND notify_date_to >= '${formattedDate}'`,function(result){
+            io.emit('alerts', result);
+         })
         });
 
-        io.emit('alerts', someData);
+        db.custom(`SELECT * FROM notify WHERE notify_date_from <= '${formattedDate}' AND notify_date_to >= '${formattedDate}'`,function(result){
+            console.log(result)
+            io.emit('alerts', result);
+         })
+        
       
         // Handle disconnection
         socket.on('disconnect', () => {
@@ -252,6 +260,21 @@ function endpoints(){
     app.post("/api/user/info/single", (req, res) =>{
         db.userInfo({user_id:req.body.id},(data) =>{
             data.map(x => data = x)
+            res.json(data)
+        })
+    })
+    app.post("/api/notify/get/single", (req, res) =>{
+        db.custom(`SELECT * FROM notify WHERE notify_id = '${req.body.id}'`, function(data){
+            res.json(data)
+        })
+    })
+    app.post("/api/data/update/notify", (req, res) =>{
+        db.update(req.body.data,"notify","notify_id",req.body.id,function(data){
+            res.json(data)
+        })
+    })
+    app.post("/api/data/save/notify", (req, res) =>{
+        db.insert(req.body.data,"notify", function(data){
             res.json(data)
         })
     })

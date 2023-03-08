@@ -60,9 +60,21 @@ import {
   // Custom components
   import Card from "components/card/Card";
   import { MdCheckCircle, MdCancel, MdOutlineError } from "react-icons/md";
+  import io from 'socket.io-client';
   const awaited = async (pag, refresh, setCurrent, current,selectedOption) => {
     setCurrent(pag);
     await refresh(pag,selectedOption)
+  }
+
+  const sender = () => {
+    const socket = io();
+
+    // Listen for initial data payload from server
+    socket.emit('update_notify', true);
+    // Disconnect socket when component unmounts
+    return () => {
+      socket.disconnect();
+    }
   }
 
   
@@ -93,14 +105,66 @@ import {
     );
   }
   
-  function addNotify() {
+  async function addNotify(refresh,current,setOpen) {
+
+    
+  await fetch("/api/data/save/notify", {
+    method: "POST",
+    headers: {
+      "Content-type": "application/json"
+    },
+    body: JSON.stringify({
+        data: {
+          notify_name: document.getElementById("title").value,
+          notify_title: document.getElementById("title").value,
+          notify_text: document.getElementById("mess").value,
+          notify_date_from: document.getElementById("date-from").value,
+          notify_date_to: document.getElementById("date-to").value,
+          notify_type: document.getElementById("type").value,
+        }
+      })
+    }).then((res) => res.json())
+      .then((data) => {
+        refresh(1,current)
+        sender();
+        console.log("UPDATED")
+        setOpen(false)
+    }); 
     
   }
   // Assets
 
+  async function saveNotify(id,refresh,current,setOpen) {
+
+    
+    await fetch("/api/data/update/notify", {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json"
+      },
+      body: JSON.stringify({
+          data: {
+            notify_name: document.getElementById("title").value,
+            notify_title: document.getElementById("title").value,
+            notify_text: document.getElementById("mess").value,
+            notify_date_from: document.getElementById("date-from").value,
+            notify_date_to: document.getElementById("date-to").value,
+            notify_type: document.getElementById("type").value,
+          },
+          id: id
+        })
+      }).then((res) => res.json())
+        .then((data) => {
+          refresh(1,current)
+          sender();
+          console.log("UPDATED")
+          setOpen(false)
+      }); 
+      
+    }
+
   export default function ColumnsTable(props) {
     const { columnsData, tableData, ref, refresh,pages, setOpenAdd, current, setCurrent } = props;
-    console.log(tableData)
     const columns = useMemo(() => columnsData, [columnsData]);
     const data = useMemo(() => tableData, [tableData]);
     const [memoryLimit, setMemoryLimit] = React.useState(localStorage.getItem('limit')?localStorage.getItem('limit'):10);
@@ -193,6 +257,29 @@ import {
     };
 
     const [isOpen, setOpen] = React.useState(false);
+    const [isOpenUpdate, setOpenUpdate] = React.useState(false);
+    const [dataEdit, setDataEdit] = React.useState({});
+
+    const editNotify = async (id, setOpenUpdate) => {
+      console.log(id)
+      await fetch("/api/notify/get/single", {
+        method: "POST",
+        headers: {
+            "Content-type": "application/json"
+        },
+        body: JSON.stringify({
+          id: id
+        })
+        })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data)
+          setDataEdit(data[0])
+        });
+
+      setOpenUpdate(true)
+    }
+
     return (
       <Card
         direction='column'
@@ -262,7 +349,7 @@ import {
             {page.map((row, index) => {
               prepareRow(row);
               return (
-                <Tr  _hover={{ bg: colorMode === "light" ? "gray.200" : "navy.400" }} cursor="pointer" {...row.getRowProps()} key={index}>
+                <Tr onClick={() => editNotify(row.cells[0].value,setOpenUpdate)}  _hover={{ bg: colorMode === "light" ? "gray.200" : "navy.400" }} cursor="pointer" {...row.getRowProps()} key={index}>
                   {row.cells.map((cell, index) => {
                     let data = "";
                     if (cell.column.Header === "photo") {
@@ -321,7 +408,7 @@ import {
                 <Input placeholder="wiadomość powiadomienia" defaultValue={data.first_name} borderRadius="16px" />
               </FormControl>
               <SimpleGrid columns={{sm: 1, md: 2, lg: 2}} gap="5">
-                <FormControl id="date-from" isRequired mb={3}>
+                <FormControl id="date-from" isRequired mb={1}>
                   <FormLabel>Rozpoczęcie</FormLabel>
                   <Input
                   placeholder="Select Date and Time"
@@ -330,7 +417,7 @@ import {
                   borderRadius="16px"
                   />
                 </FormControl>
-                <FormControl id="date-to" isRequired mb={3}>
+                <FormControl id="date-to" isRequired mb={1}>
                   <FormLabel>Zakończenie</FormLabel>
                   <Input
                   placeholder="Select Date and Time"
@@ -338,6 +425,16 @@ import {
                   type="datetime-local"
                   borderRadius="16px"
                   />
+                </FormControl>
+
+                <FormControl id="type" isRequired>
+                  <FormLabel>Rodzaj alertu</FormLabel>
+                  <Select placeholder="wybierz poziom dostępu" borderRadius="16px" >
+                    <option value="error">Krytyczny</option>
+                    <option value="warning">Uwaga</option>
+                    <option value="info">Informacyjny</option>
+                    <option value="success">Pozytywny</option>
+                  </Select>
                 </FormControl>
              
               </SimpleGrid>
@@ -348,7 +445,69 @@ import {
             <Button variant="ghost"  mr={3} onClick={() => setOpen(false)}>
               Anuluj
             </Button>
-            <Button colorScheme="brand" onClick={() => addNotify()}>Dodaj</Button>
+            <Button colorScheme="brand" onClick={() => addNotify(refresh,current,setOpen)}>Dodaj</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+      
+
+
+      <Modal isOpen={isOpenUpdate} onClose={() => setOpenUpdate(false)} size="lg">
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Edytuj powiadomienie</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Box>
+              <FormControl id="title" isRequired mb={3}>
+                <FormLabel>Tytuł</FormLabel>
+                <Input placeholder="Tytuł powiadomienia" defaultValue={dataEdit.notify_title} borderRadius="16px" />
+              </FormControl>
+              <FormControl id="mess" isRequired mb={3}>
+                <FormLabel>Wiadomość</FormLabel>
+                <Input placeholder="wiadomość powiadomienia" defaultValue={dataEdit.notify_text} borderRadius="16px" />
+              </FormControl>
+              <SimpleGrid columns={{sm: 1, md: 2, lg: 2}} gap="5">
+                <FormControl id="date-from" isRequired mb={1}>
+                  <FormLabel>Rozpoczęcie</FormLabel>
+                  <Input
+                  defaultValue={dataEdit.notify_date_from}
+                  placeholder="Select Date and Time"
+                  size="md"
+                  type="datetime-local"
+                  borderRadius="16px"
+                  />
+                </FormControl>
+                <FormControl id="date-to" isRequired mb={1}>
+                  <FormLabel>Zakończenie</FormLabel>
+                  <Input
+                  defaultValue={dataEdit.notify_date_to}
+                  placeholder="Select Date and Time"
+                  size="md"
+                  type="datetime-local"
+                  borderRadius="16px"
+                  />
+                </FormControl>
+
+                <FormControl id="type" isRequired>
+                  <FormLabel>Rodzaj alertu</FormLabel>
+                  <Select placeholder="wybierz poziom dostępu" borderRadius="16px" defaultValue={dataEdit.notify_type}>
+                    <option value="error">Krytyczny</option>
+                    <option value="warning">Uwaga</option>
+                    <option value="info">Informacyjny</option>
+                    <option value="success">Pozytywny</option>
+                  </Select>
+                </FormControl>
+             
+              </SimpleGrid>
+    
+            </Box>
+          </ModalBody>
+          <ModalFooter>
+            <Button variant="ghost"  mr={3} onClick={() => setOpenUpdate(false)}>
+              Anuluj
+            </Button>
+            <Button colorScheme="brand" onClick={() => saveNotify(dataEdit.notify_id,refresh,current,setOpenUpdate)}>Zapisz</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

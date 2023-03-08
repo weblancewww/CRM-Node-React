@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.3002f260.css",
-    "main.js": "/static/js/main.a983e6ee.js",
+    "main.js": "/static/js/main.6bdec9bc.js",
     "static/media/crmbg.png": "/static/media/crmbg.d96a628c1ead3f494b7a.png",
     "static/media/NftBanner1.png": "/static/media/NftBanner1.87062366f75bedd52bd2.png",
     "static/media/Nft2.png": "/static/media/Nft2.7897c45d2601ee3adfb5.png",
@@ -22,10 +22,10 @@
     "static/media/Project1.png": "/static/media/Project1.d5952144f76e2cb9e5d6.png",
     "index.html": "/index.html",
     "main.3002f260.css.map": "/static/css/main.3002f260.css.map",
-    "main.a983e6ee.js.map": "/static/js/main.a983e6ee.js.map"
+    "main.6bdec9bc.js.map": "/static/js/main.6bdec9bc.js.map"
   },
   "entrypoints": [
     "static/css/main.3002f260.css",
-    "static/js/main.a983e6ee.js"
+    "static/js/main.6bdec9bc.js"
   ]
 }

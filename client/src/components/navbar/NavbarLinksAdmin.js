@@ -111,7 +111,7 @@ export default function HeaderLinks(props) {
     // Listen for initial data payload from server
     socket.on('alerts', (data) => {
       setAlerts(data);
-      setCounts(data.alerts.length)
+      setCounts(data.length)
       console.log(data)
     });
     // Disconnect socket when component unmounts
@@ -124,16 +124,7 @@ export default function HeaderLinks(props) {
     const socket = io();
 
     // Listen for initial data payload from server
-    socket.emit('alerts', {
-      alerts: [
-          {
-              message: "Helo, World",
-              role: 10,
-              type: "success",
-              text: "O tam na dol"
-          }
-      ]
-  });
+
     // Disconnect socket when component unmounts
     return () => {
       socket.disconnect();
@@ -143,14 +134,14 @@ export default function HeaderLinks(props) {
 
   const components = [];
   if(alerts){
-  for (let i = 0; i < alerts.alerts.length; i++) {
-    var alert = alerts.alerts[i]
+  for (let i = 0; i < alerts.length; i++) {
+    var alert = alerts[i]
     components.push(
-      <Alert status={alert.type} mb="2" borderRadius="10px">
+      <Alert status={alert.notify_type} mb="2" borderRadius="10px">
         <AlertIcon />
         <Box>
-        <AlertTitle>{alert.message}</AlertTitle>
-        <AlertDescription>{alert.text}</AlertDescription>
+        <AlertTitle>{alert.notify_title}</AlertTitle>
+        <AlertDescription>{alert.notify_text}</AlertDescription>
         </Box>
       </Alert>
     );
