@@ -7,6 +7,7 @@ import {
   MdHome,
   MdLock,
   MdOutlineShoppingCart,
+  MdPayments
 } from "react-icons/md";
 
 // Admin Imports
@@ -19,6 +20,7 @@ import DataTables from "views/admin/dataTables";
 import SignInCentered from "views/auth/signIn";
 import Workers from "views/admin/workers";
 import Notify from "views/admin/notify";
+import Invoices from "views/admin/invoices";
 
 const routes = [
   {
@@ -49,6 +51,14 @@ const routes = [
     icon: <Icon as={MdBarChart} width='20px' height='20px' color='inherit' />,
     path: "/data-tables",
     component: DataTables,
+  },
+  {
+    name: "Faktury",
+    layout: "/admin",
+    path: "/faktury",
+    role: "0",
+    icon: <Icon as={MdPayments} width='20px' height='20px' color='inherit' />,
+    component: Invoices,
   },
   {
     name: "Profil",
