@@ -273,6 +273,11 @@ function endpoints(){
             res.json(data)
         })
     })
+    app.post("/api/data/delete/notify", (req, res) =>{
+        db.custom(`DELETE FROM notify WHERE notify_id = ${req.body.id}`,function(data){
+            res.json(data)
+        })
+    })
     app.post("/api/data/save/notify", (req, res) =>{
         db.insert(req.body.data,"notify", function(data){
             res.json(data)

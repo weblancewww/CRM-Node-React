@@ -33,9 +33,11 @@ import Upload from "views/admin/profile/components/Upload";
 import PassChange from "views/admin/profile/components/PassChange";
 
 // Assets
-import banner from "assets/img/auth/banner.png";
+import banner from "assets/img/auth/bannerwb.png";
 import avatar from "assets/img/avatars/avatar4.png";
 import React from "react";
+import Cookies from 'js-cookie';
+
 
 const User_data = () => {
 
@@ -61,8 +63,25 @@ const User_data = () => {
 export default function Overview() {
 
   var res_data = User_data()
-  
 
+  const [user, setUser] = React.useState(null);
+
+  console.log(Cookies.get('user_id'))
+
+  React.useEffect( async ()=>{
+
+    await fetch("/api/user/info/single", {
+      method: "POST",
+      headers: {
+          "Content-type": "application/json"
+      },
+      body: JSON.stringify({
+        id: Cookies.get('user_id')
+      })
+      })
+      .then((response) => response.json())
+      .then((data) => setUser(data));
+  },[])
 
   return (
     <Box pt={{ base: "130px", md: "80px", xl: "80px" }}>
@@ -77,17 +96,18 @@ export default function Overview() {
           lg: "1fr",
         }}
         gap={{ base: "20px", xl: "20px" }}>
-        <Banner
+          {user?<Banner
           gridArea='1 / 1 / 2 / 2'
           banner={banner}
-          avatar={res_data?res_data.photo :{avatar}}
+          data={user}
           name={res_data?res_data.first_name + ' ' + res_data.last_name:'Imie Nazwisko'}
           job={res_data?res_data.positions :'Stanowisko'}
           // posts='17'
           // followers='9.7k'
           // following='274'
           
-        />
+        />:""}
+        
         
         {/* <Storage
           gridArea={{ base: "2 / 1 / 3 / 2", lg: "1 / 2 / 2 / 3" }}

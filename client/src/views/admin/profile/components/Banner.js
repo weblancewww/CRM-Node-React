@@ -5,10 +5,39 @@ import React from "react";
 import Information from "views/admin/profile/components/Information";
 
 export default function Banner(props) {
-  const { banner, avatar, name, job, posts, followers, following } = props;
+  const { banner,data, name, job} = props;
   // Chakra Color Mode
+
+  const [imageUrl, setImageUrl] = React.useState("");
   const textColorPrimary = useColorModeValue("secondaryGray.900", "white");
   const textColorSecondary = "gray.400";
+  console.log(data)
+
+
+  React.useEffect(() => {
+    if(data != null) {
+    fetch(`/data/images/${data.photo}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+      .then((response) => response.blob())
+      .then((blob) => {
+        console.log(blob)
+        setImageUrl(URL.createObjectURL(blob));
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    }
+  }, []);
+
+  console.log(imageUrl)
+
+  
+
+
   const borderColor = useColorModeValue(
     "white !important",
     "#111C44 !important"
@@ -28,7 +57,7 @@ export default function Banner(props) {
       />
       <Avatar
         mx='auto'
-        src={avatar}
+        src={imageUrl}
         h='87px'
         w='87px'
         mt='-43px'
@@ -38,40 +67,12 @@ export default function Banner(props) {
       <Text color={textColorPrimary} fontWeight='bold' fontSize='xl' mt='10px'>
         {name}
       </Text>
-      <Text color={textColorSecondary} fontSize='sm'>
-        {job}
-      </Text>
-      {/* <Flex w='max-content' mx='auto' mt='26px'>
-        <Flex mx='auto' me='60px' align='center' direction='column'>
-          <Text color={textColorPrimary} fontSize='2xl' fontWeight='700'>
-            {posts}
-          </Text>
-          <Text color={textColorSecondary} fontSize='sm' fontWeight='400'>
-            Posts
-          </Text>
-        </Flex>
-        <Flex mx='auto' me='60px' align='center' direction='column'>
-          <Text color={textColorPrimary} fontSize='2xl' fontWeight='700'>
-            {followers}
-          </Text>
-          <Text color={textColorSecondary} fontSize='sm' fontWeight='400'>
-            Followers
-          </Text>
-        </Flex>
-        <Flex mx='auto' align='center' direction='column'>
-          <Text color={textColorPrimary} fontSize='2xl' fontWeight='700'>
-            {following}
-          </Text>
-          <Text color={textColorSecondary} fontSize='sm' fontWeight='400'>
-            Following
-          </Text>
-        </Flex>
-      </Flex> */}
+  
       <SimpleGrid columns='2' gap='20px'>
         <Information
           boxShadow={cardShadow}
-          title='Education'
-          value='Stanford University'
+          title='Poziom dostępu'
+          value={job}
         />
         <Information
           boxShadow={cardShadow}
