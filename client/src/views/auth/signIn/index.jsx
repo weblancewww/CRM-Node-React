@@ -130,7 +130,7 @@ function SignIn() {
           
           
           <FormControl>
-            <form action="javascript:changePass()">
+            <form action="javascript:">
             <FormLabel
               display='flex'
               ms='4px'
