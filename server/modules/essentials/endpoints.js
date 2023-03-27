@@ -152,8 +152,8 @@ function endpoints(){
 
     app.post("/api/auth/session", (req, res) =>{
         if(session[parseCookies(req)["user_"+config.login_key_secret+"_loggin"]]){
-            db.custom(`SELECT * FROM users WHERE user_id = ${session[parseCookies(req)["user_"+config.login_key_secret+"_loggin"]].user_id}`, function(perms){
-                res.json({session: true,user:{perms: perms[0].positions, user_name: perms[0].first_name,photo: perms[0].photo}})
+            db.custom(`SELECT * FROM users LEFT JOIN roles ON roles.roles_id = users.positions WHERE user_id = ${session[parseCookies(req)["user_"+config.login_key_secret+"_loggin"]].user_id}`, function(perms){
+                res.json({session: true,user:{perms: perms[0].roles_value, user_name: perms[0].first_name,photo: perms[0].photo}})
             })
             
             
@@ -185,6 +185,7 @@ function endpoints(){
 
             var keyDefined = rand.generate(25);
             res.cookie('user_'+config.login_key_secret+'_loggin', keyDefined)
+            res.cookie('login_key', config.login_key_secret)
             session[keyDefined] = {
                 user_name: data.email,
                 user_perm: data.positions,
@@ -247,17 +248,26 @@ function endpoints(){
     })
 
     app.post("/api/user/info", (req, res) =>{
-        if(!session.logged){
-            return
-        }
-        db.userInfo({user_id:session.user_id},(data) =>{
+        console.log(req.body.keydef)
+        db.userInfo({user_id:session[req.body.keydef].user_id},(data) =>{
             data.map(x => data = x)
             res.json(data)
         })
     })
 
 
+    app.post("/api/user/info/roles", (req, res) =>{
+        db.custom("SELECT * FROM roles", function(data){
+            res.json(data)
+        })
+    })
     app.post("/api/user/info/single", (req, res) =>{
+        db.userInfo({user_id:session[req.body.keydef].user_id},(data) =>{
+            data.map(x => data = x)
+            res.json(data)
+        })
+    })
+    app.post("/api/user/info/single/id", (req, res) =>{
         db.userInfo({user_id:req.body.id},(data) =>{
             data.map(x => data = x)
             res.json(data)

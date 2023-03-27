@@ -35,6 +35,13 @@ module.exports = class MySQL {
         password TEXT NOT NULL,
         first_name TEXT NOT NULL,
         last_name TEXT NOT NULL,
+        is_b2b INT(10) NOT NULL,
+        b2b_company TEXT NOT NULL,
+        phone TEXT NOT NULL,
+        phone_private TEXT NOT NULL,
+        email_private TEXT NOT NULL,
+        buss_state TEXT NOT NULL,
+        buss_country TEXT NOT NULL,
         positions TEXT NOT NULL,
         photo TEXT DEFAULT NULL,
         PRIMARY KEY (user_id)
@@ -80,7 +87,7 @@ module.exports = class MySQL {
   }
   
   userInfo(data, callback){
-    this.con.query("SELECT user_id, email, first_name, last_name, positions, photo FROM users WHERE user_id='" + data.user_id +"';", 
+    this.con.query("SELECT * FROM users LEFT JOIN roles ON roles.roles_id = users.positions WHERE user_id='" + data.user_id +"';", 
     function (err, result) {
       if (err) throw err;
       return callback(result);

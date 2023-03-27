@@ -2,7 +2,6 @@
 import { Modal,ModalOverlay,ModalContent, ModalHeader,ModalCloseButton,ModalBody,ModalFooter,Avatar, Box, Flex, Text, useColorModeValue, SimpleGrid,InputGroup, InputRightElement, Button} from "@chakra-ui/react";
 import Card from "components/card/Card.js";
 import React from "react";
-import Information from "views/admin/profile/components/Information";
 
 import {
   FormControl,

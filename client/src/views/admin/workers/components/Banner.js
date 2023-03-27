@@ -2,7 +2,6 @@
 import { Avatar, Box, Flex, Text, useColorModeValue, SimpleGrid} from "@chakra-ui/react";
 import Card from "components/card/Card.js";
 import React from "react";
-import Information from "views/admin/profile/components/Information";
 
 import {
   FormControl,
@@ -13,8 +12,28 @@ import {
   Select
 } from "@chakra-ui/react"
 import PassChange from "views/admin/workers/components/PassChange";
+
+function Roles(props){
+  const {roles, value} = props;
+  const [selectedOption, setSelectedOption] = React.useState("");
+
+  React.useEffect(() => {
+    setSelectedOption(value);
+    console.log(value)
+  }, []); 
+
+  return (
+  <Select placeholder="wybierz poziom dostępu" borderRadius="16px" value={selectedOption}>
+    {roles.map(item => (
+      <option value={item.roles_id}>{item.roles_name}</option>
+    ))}
+  </Select>
+  )
+}
+
+
 export default function Banner(props) {
-  const { banner, avatar, name, job, posts, followers, following, data } = props;
+  const { banner, avatar, name, job, posts, followers, following, data, roles } = props;
 
   const [imageUrl, setImageUrl] = React.useState("");
   const fileInputRef = React.useRef(null);
@@ -76,6 +95,7 @@ export default function Banner(props) {
     "0px 18px 40px rgba(112, 144, 176, 0.12)",
     "unset"
   );
+   
   return (
     <Card mb={{ base: "0px", lg: "20px" }} align='center'>
       <Box
@@ -116,10 +136,7 @@ export default function Banner(props) {
         </FormControl>
         <FormControl id="position" isRequired>
           <FormLabel>Prawa dostępowe</FormLabel>
-          <Select placeholder="wybierz poziom dostępu" borderRadius="16px" defaultValue={data.positions}>
-            <option value="10">Administrator</option>
-            <option value="7">Pracownik</option>
-          </Select>
+          <Roles roles={roles} value={data.positions}/>
         </FormControl>     
       </SimpleGrid>
       <PassChange

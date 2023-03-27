@@ -25,16 +25,11 @@ import { Box, Grid } from "@chakra-ui/react";
 
 // Custom components
 import Banner from "views/admin/profile/components/Banner";
-import General from "views/admin/profile/components/General";
-import Notifications from "views/admin/profile/components/Notifications";
-import Projects from "views/admin/profile/components/Projects";
-import Storage from "views/admin/profile/components/Storage";
-import Upload from "views/admin/profile/components/Upload";
+
 import PassChange from "views/admin/profile/components/PassChange";
 
 // Assets
 import banner from "assets/img/auth/bannerwb.png";
-import avatar from "assets/img/avatars/avatar4.png";
 import React from "react";
 import Cookies from 'js-cookie';
 
@@ -50,7 +45,9 @@ const User_data = () => {
       headers: {
         "Content-type": "application/json"
       },
-  
+      body: JSON.stringify({
+        keydef: Cookies.get('user_'+Cookies.get('login_key')+'_loggin')
+      })
     }).then((res) => res.json())
       .then((data) => {
       setData(data)
@@ -77,7 +74,7 @@ export default function Overview() {
           "Content-type": "application/json"
       },
       body: JSON.stringify({
-        id: Cookies.get('user_id')
+        keydef: Cookies.get('user_'+Cookies.get('login_key')+'_loggin')
       })
       })
       .then((response) => response.json())
@@ -102,7 +99,6 @@ export default function Overview() {
           banner={banner}
           data={user}
           name={res_data?res_data.first_name + ' ' + res_data.last_name:'Imie Nazwisko'}
-          job={res_data?res_data.positions :'Stanowisko'}
           // posts='17'
           // followers='9.7k'
           // following='274'

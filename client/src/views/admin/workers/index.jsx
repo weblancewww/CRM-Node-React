@@ -192,11 +192,15 @@ export default function Workers() {
 
     
     const [user, setUser] = React.useState(null);
+    const [loading, setLoading] = React.useState(false);
+    const [roles, setRoles] = React.useState([]);
     const [openAdd, setOpenAdd] = React.useState(false);
 
-    const handleOpen = async (id) => {
+    const handleOpen = async (id,setButtonText) => {
+      
       try {
-        await fetch("/api/user/info/single", {
+        
+        await fetch("/api/user/info/single/id", {
           method: "POST",
           headers: {
               "Content-type": "application/json"
@@ -208,9 +212,24 @@ export default function Workers() {
           .then((response) => response.json())
           .then((data) => setUser(data));
         onOpen();
+        setButtonText(false)
       } catch (error) {
         console.error(error);
       }
+
+      try {
+        await fetch("/api/user/info/roles", {
+          method: "POST",
+          headers: {
+              "Content-type": "application/json"
+          },
+          })
+          .then((response) => response.json())
+          .then((data) => setRoles(data));
+      } catch (error) {
+        console.error(error);
+      }
+      setLoading(false)
     };
 
     const { colorMode } = useColorMode();
@@ -246,6 +265,7 @@ export default function Workers() {
           tableData={users.data}
           pages={users.pages}
           onOpen={handleOpen}
+          loading={loading}
           refresh={GetWorkers}
           setOpenAdd={setOpenAdd}
           current={current}
@@ -269,6 +289,7 @@ export default function Workers() {
             <Banner
               gridArea='1 / 1 / 2 / 2'
               banner={banner}
+              roles={roles}
               data={user}
             />
           </DrawerBody>

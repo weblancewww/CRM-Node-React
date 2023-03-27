@@ -2,7 +2,6 @@
 import { Avatar, Box, Flex, Text, useColorModeValue, SimpleGrid} from "@chakra-ui/react";
 import Card from "components/card/Card.js";
 import React from "react";
-import Information from "views/admin/profile/components/Information";
 import { Input, InputGroup, InputRightElement, Button, FormControl, FormLabel} from "@chakra-ui/react"
 
 export default function PassChange() {

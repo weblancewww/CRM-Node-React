@@ -108,32 +108,32 @@ export default function Banner(props) {
         <Information
           boxShadow={cardShadow}
           title='Poziom dostępu'
-          value={job}
+          value={data.roles_name}
         />
         <Information
           boxShadow={cardShadow}
-          title='Languages'
-          value='English, Spanish, Italian'
+          title='Adres e-mail'
+          value={data.email}
         />
         <Information
           boxShadow={cardShadow}
-          title='Department'
-          value='Product Design'
+          title='Numer telefonu'
+          value={data.phone}
         />
         <Information
           boxShadow={cardShadow}
-          title='Work History'
-          value='Google, Facebook'
+          title='Prywatny numer telefonu'
+          value={data.phone_private}
         />
         <Information
           boxShadow={cardShadow}
-          title='Organization'
-          value='Simmmple Web LLC'
+          title='Prywatny adres e-mail'
+          value={data.email_private}
         />
         <Information
           boxShadow={cardShadow}
-          title='Birthday'
-          value='20 July 1986'
+          title='Adres'
+          value={data.buss}
         />
       </SimpleGrid>
       <Flex justifyContent={"right"} mt="20px">

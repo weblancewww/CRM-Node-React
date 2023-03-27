@@ -80,8 +80,28 @@ import {
   
   // Assets
 
+
+
+
+  function ButtonClicked(props){
+      const {onOpen, value} = props
+
+      const [buttonText, setButtonText] = React.useState(false);
+
+      const handleClick = (event) => {
+        setButtonText(true);
+        onOpen(value,setButtonText)
+      };
+
+      return (
+        <Button  colorScheme="brand" onClick={() => handleClick()}>
+          {buttonText?<Spinner/>:"Opcje"}
+        </Button>
+      )
+  }
+
   export default function ColumnsTable(props) {
-    const { columnsData, tableData, ref,onOpen, refresh,pages, setOpenAdd, current, setCurrent } = props;
+    const { columnsData, tableData, ref,onOpen, refresh,pages, setOpenAdd, current, setCurrent, loading } = props;
     console.log(tableData)
     const columns = useMemo(() => columnsData, [columnsData]);
     const data = useMemo(() => tableData, [tableData]);
@@ -191,7 +211,9 @@ import {
             {page.map((row, index) => {
               prepareRow(row);
               return (
-                <Tr  _hover={{ bg: colorMode === "light" ? "gray.200" : "navy.400" }} cursor="pointer" onClick={() => onOpen(row.cells[0].value)} {...row.getRowProps()} key={index}>
+                <Tr  _hover={{ bg: colorMode === "light" ? "gray.200" : "navy.400" }} cursor="pointer" 
+                // onClick={() => onOpen(row.cells[0].value)}
+                 {...row.getRowProps()} key={index}>
                   {row.cells.map((cell, index) => {
                     let data = "";
                     if (cell.column.Header === "photo") {
@@ -209,9 +231,7 @@ import {
                       }
                       if (cell.column.id === "actions") {
                         data = (
-                            <Button  colorScheme="brand" onClick={() => onOpen(row.cells[0].value)}>
-                            Opcje
-                          </Button>
+                          <ButtonClicked onOpen={onOpen} value={row.cells[0].value}></ButtonClicked>
                         )
                       }
                     return (
