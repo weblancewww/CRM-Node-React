@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.3002f260.css",
-    "main.js": "/static/js/main.1b37b2cd.js",
+    "main.js": "/static/js/main.d23fd5da.js",
     "static/media/crmbg.png": "/static/media/crmbg.d96a628c1ead3f494b7a.png",
     "static/media/NftBanner1.png": "/static/media/NftBanner1.87062366f75bedd52bd2.png",
     "static/media/Nft2.png": "/static/media/Nft2.7897c45d2601ee3adfb5.png",
@@ -16,15 +16,12 @@
     "static/media/avatar4.png": "/static/media/avatar4.54d5c1de851c273b2cd9.png",
     "static/media/bannerwb.png": "/static/media/bannerwb.75ce95f153b67a8fbe45.png",
     "static/media/Nft5.png": "/static/media/Nft5.62dbaf7dd91b4180035c.png",
-    "static/media/Project3.png": "/static/media/Project3.378b532af038bf47559c.png",
-    "static/media/Project2.png": "/static/media/Project2.90f702366422b52138b1.png",
-    "static/media/Project1.png": "/static/media/Project1.d5952144f76e2cb9e5d6.png",
     "index.html": "/index.html",
     "main.3002f260.css.map": "/static/css/main.3002f260.css.map",
-    "main.1b37b2cd.js.map": "/static/js/main.1b37b2cd.js.map"
+    "main.d23fd5da.js.map": "/static/js/main.d23fd5da.js.map"
   },
   "entrypoints": [
     "static/css/main.3002f260.css",
-    "static/js/main.1b37b2cd.js"
+    "static/js/main.d23fd5da.js"
   ]
 }
